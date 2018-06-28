@@ -3,6 +3,8 @@ package jp.zliandroid.mymusicplayer
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.design.widget.TabLayout
+import android.support.v4.app.FragmentManager
 import android.support.v4.view.GravityCompat
 import android.support.v4.app.FragmentTabHost
 import android.support.v7.app.ActionBarDrawerToggle
@@ -12,14 +14,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TabHost
 import jp.zliandroid.mymusicplayer.R.id.*
+import jp.zliandroid.mymusicplayer.dummy.DummyContent
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
 import kotlinx.android.synthetic.main.content_wakeup.*
-import kotlinx.android.synthetic.main.fragment_album.*
 
-class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    lateinit var tabHost :FragmentTabHost
+class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,23 +34,8 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        //FragmentManagerの取得
-        val mFragmentManager = supportFragmentManager
-        //xmlからFragmentTabHostを取得、idが android.R.id.tabhost である点に注意
-        tabHost = findViewById(android.R.id.tabhost)
-        tabHost.setup(this,mFragmentManager,R.id.content)
-        //String型の引数には任意のidを渡す
-        //今回は2つのFragmentをFragmentTabHostから切り替えるため、2つのTabSpecを用意する
-        val mTabSpec1 :TabHost.TabSpec = tabHost.newTabSpec("tab_album")
-        val mTabSpec2 :TabHost.TabSpec = tabHost.newTabSpec("tab_folder")
-        Log.d("debug","made tabHost")
-        //Tab上に表示する文字を渡す
-        mTabSpec1.setIndicator("アルバム")
-        mTabSpec2.setIndicator("フォルダ")
-        tabHost.addTab(mTabSpec1,AlbumListFragment.javaClass,null)
-        tabHost.addTab(mTabSpec2,FilerFragment.javaClass,null)
-        Log.d("debug","finished")
-
+        tabs.addTab(tabs.newTab().setText("Tab1"))
+        tabs.addTab(tabs.newTab().setText("Tab2"))
 
     }
 
