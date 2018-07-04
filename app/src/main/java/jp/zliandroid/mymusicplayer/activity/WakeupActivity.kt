@@ -1,25 +1,25 @@
-package jp.zliandroid.mymusicplayer
+package jp.zliandroid.mymusicplayer.activity
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentManager
 import android.support.v4.view.GravityCompat
-import android.support.v4.app.FragmentTabHost
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TabHost
-import jp.zliandroid.mymusicplayer.R.id.*
-import jp.zliandroid.mymusicplayer.dummy.DummyContent
+import jp.zliandroid.mymusicplayer.R
+import jp.zliandroid.mymusicplayer.adapter.MyFragmentPagerAdapter
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
 import kotlinx.android.synthetic.main.content_wakeup.*
 
+
+
 class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+
+    lateinit var mFragmentManager: FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +34,9 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        tabs.addTab(tabs.newTab().setText("Tab1"))
-        tabs.addTab(tabs.newTab().setText("Tab2"))
+        mFragmentManager = supportFragmentManager
+
+        pager.adapter = MyFragmentPagerAdapter(mFragmentManager)
 
     }
 
