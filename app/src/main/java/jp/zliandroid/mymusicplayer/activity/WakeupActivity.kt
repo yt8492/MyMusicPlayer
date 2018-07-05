@@ -38,6 +38,8 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         pager.adapter = MyFragmentPagerAdapter(mFragmentManager)
 
+        tabs.setupWithViewPager(pager)
+
     }
 
     override fun onBackPressed() {

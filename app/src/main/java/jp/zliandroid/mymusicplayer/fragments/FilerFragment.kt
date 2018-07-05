@@ -55,8 +55,6 @@ class FilerFragment : Fragment() {
         super.onAttach(context)
         if (context is FragmentListener) {
             listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
         }
     }
 

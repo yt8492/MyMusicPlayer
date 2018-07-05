@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 
 import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment.FragmentListener
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_album.view.*
  * specified [FragmentListener].
  */
 class MyAlbumRecyclerViewAdapter(
-        private val mValues: List<DummyItem>,
+        private val mValues: List<Album>,
         private val mListener: FragmentListener?)
     : RecyclerView.Adapter<MyAlbumRecyclerViewAdapter.ViewHolder>() {
 
@@ -25,7 +26,7 @@ class MyAlbumRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
+            val item = v.tag as Album
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
             mListener?.onClickListItem()
@@ -40,8 +41,8 @@ class MyAlbumRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mIdView.text = item.id
-        holder.mContentView.text = item.content
+        holder.mIdView.text = position.toString()
+        holder.mContentView.text = item.album
 
         with(holder.mView) {
             tag = item

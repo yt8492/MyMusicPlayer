@@ -9,10 +9,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.adapter.MyAlbumRecyclerViewAdapter
 
-import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
 
 /**
  * A fragment representing a list of Items.
@@ -21,7 +21,6 @@ import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
  */
 class AlbumListFragment : Fragment() {
 
-    // TODO: Customize parameters
     private var columnCount = 1
 
     private var listener: FragmentListener? = null
@@ -32,6 +31,7 @@ class AlbumListFragment : Fragment() {
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +45,7 @@ class AlbumListFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyAlbumRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                adapter = MyAlbumRecyclerViewAdapter(Album.getItems(this.context), listener)
             }
         }
         return view
@@ -55,8 +55,6 @@ class AlbumListFragment : Fragment() {
         super.onAttach(context)
         if (context is FragmentListener) {
             listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement onClickListItem")
         }
     }
 
