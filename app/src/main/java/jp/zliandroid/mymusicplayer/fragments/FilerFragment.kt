@@ -1,4 +1,4 @@
-package jp.zliandroid.mymusicplayer
+package jp.zliandroid.mymusicplayer.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -9,21 +9,22 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import jp.zliandroid.mymusicplayer.R
+import jp.zliandroid.mymusicplayer.adapter.MyFileRecyclerViewAdapter
 
-import jp.zliandroid.mymusicplayer.dummy.DummyContent
-import jp.zliandroid.mymusicplayer.dummy.DummyContent.DummyItem
+import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [FilerFragment.OnListFragmentInteractionListener] interface.
+ * [FilerFragment.FragmentListener] interface.
  */
 class FilerFragment : Fragment() {
 
     // TODO: Customize parameters
     private var columnCount = 1
 
-    private var listener: OnListFragmentInteractionListener? = null
+    private var listener: FragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,7 @@ class FilerFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
+        if (context is FragmentListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
@@ -75,9 +76,9 @@ class FilerFragment : Fragment() {
      * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+
+    interface FragmentListener{
+        fun onClickListItem()
     }
 
     companion object {

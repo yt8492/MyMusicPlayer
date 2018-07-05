@@ -1,25 +1,24 @@
-package jp.zliandroid.mymusicplayer
+package jp.zliandroid.mymusicplayer.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import jp.zliandroid.mymusicplayer.R
 
-
-import jp.zliandroid.mymusicplayer.AlbumListFragment.OnListFragmentInteractionListener
-import jp.zliandroid.mymusicplayer.dummy.DummyContent.DummyItem
+import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment.FragmentListener
+import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_album.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
+ * specified [FragmentListener].
  */
 class MyAlbumRecyclerViewAdapter(
         private val mValues: List<DummyItem>,
-        private val mListener: OnListFragmentInteractionListener?)
+        private val mListener: FragmentListener?)
     : RecyclerView.Adapter<MyAlbumRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
@@ -29,7 +28,7 @@ class MyAlbumRecyclerViewAdapter(
             val item = v.tag as DummyItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
+            mListener?.onClickListItem()
         }
     }
 
