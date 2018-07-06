@@ -1,8 +1,10 @@
 package jp.zliandroid.mymusicplayer.activity
 
+import android.Manifest
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.FragmentManager
+import android.support.v4.content.PermissionChecker
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -91,5 +93,14 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun chekPermission(){
+        if (PermissionChecker.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PermissionChecker.PERMISSION_GRANTED){
+            Log.d("debug","Permission Granted")
+        } else {
+
+        }
     }
 }
