@@ -41,8 +41,6 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        checkPermission()
-
     }
 
     private fun setupFragment(){
