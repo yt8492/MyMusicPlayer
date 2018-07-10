@@ -1,6 +1,8 @@
 package jp.zliandroid.mymusicplayer.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.FragmentManager
@@ -11,13 +13,15 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import jp.zliandroid.mymusicplayer.R
+import jp.zliandroid.mymusicplayer.RuntimePermissionUtils
 import jp.zliandroid.mymusicplayer.adapter.MyFragmentPagerAdapter
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
 import kotlinx.android.synthetic.main.content_wakeup.*
 
-
+const val PERMISSION_REQUEST_CODE = 1
 
 class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
@@ -90,17 +94,27 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             }
         }
-
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
-    private fun chekPermission(){
-        if (PermissionChecker.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PermissionChecker.PERMISSION_GRANTED){
-            Log.d("debug","Permission Granted")
-        } else {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0){
+            if (!RuntimePermissionUtils.checkGrantResults(*grantResults)) {
+                Toast.makeText(this, "権限ないです", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
+    @SuppressLint("NewApi")
+    private fun chekPermission(){
+        if (!RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                requestPermissions(permissions, PERMISSION_REQUEST_CODE)
+
+            }
         }
     }
 }
