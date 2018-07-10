@@ -30,6 +30,7 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wakeup)
+        checkPermission()
         setSupportActionBar(toolbar)
         Log.d("debug","start")
 
@@ -40,12 +41,16 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        checkPermission()
+
+    }
+
+    private fun setupFragment(){
         mFragmentManager = supportFragmentManager
 
         pager.adapter = MyFragmentPagerAdapter(mFragmentManager)
 
         tabs.setupWithViewPager(pager)
-
     }
 
     override fun onBackPressed() {
@@ -101,15 +106,19 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0){
-            if (!RuntimePermissionUtils.checkGrantResults(*grantResults)) {
+            if (RuntimePermissionUtils.checkGrantResults(*grantResults)) {
+                setupFragment()
+            } else {
                 Toast.makeText(this, "権限ないです", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     @SuppressLint("NewApi")
-    private fun chekPermission(){
-        if (!RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+    private fun checkPermission(){
+        if (RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            setupFragment()
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
                 requestPermissions(permissions, PERMISSION_REQUEST_CODE)

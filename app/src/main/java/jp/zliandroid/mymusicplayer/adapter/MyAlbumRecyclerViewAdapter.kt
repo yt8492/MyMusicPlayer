@@ -41,8 +41,7 @@ class MyAlbumRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.mIdView.text = position.toString()
-        holder.mContentView.text = item.album
+        holder.albumTile.text = item.album
 
         with(holder.mView) {
             tag = item
@@ -53,11 +52,10 @@ class MyAlbumRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
+        val albumTile: TextView = mView.album_title
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + " '" + albumTile.text + "'"
         }
     }
 }
