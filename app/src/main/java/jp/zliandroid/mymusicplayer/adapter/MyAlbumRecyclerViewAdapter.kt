@@ -1,9 +1,11 @@
 package jp.zliandroid.mymusicplayer.adapter
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
@@ -41,7 +43,13 @@ class MyAlbumRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
+        item.albumArt?.let {
+            holder.albumArt.setImageURI(it)
+        } ?: run{
+            holder.albumArt.setImageResource(R.drawable.dummy_album_art_slim)
+        }
         holder.albumTile.text = item.album
+        holder.artist.text = item.artist
 
         with(holder.mView) {
             tag = item
@@ -52,7 +60,9 @@ class MyAlbumRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
+        val albumArt: ImageView = mView.album_art
         val albumTile: TextView = mView.album_title
+        val artist: TextView = mView.artist
 
         override fun toString(): String {
             return super.toString() + " '" + albumTile.text + "'"

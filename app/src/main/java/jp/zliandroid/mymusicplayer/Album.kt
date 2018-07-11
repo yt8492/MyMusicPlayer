@@ -3,23 +3,27 @@ package jp.zliandroid.mymusicplayer
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.provider.MediaStore
 import kotlin.properties.Delegates
 
 class Album {
 
     var id: Long by Delegates.notNull()
-    lateinit var album: String
-    var albumArt: String?
+    var album: String
+    var albumArt: Uri?
     var albumId: Long by Delegates.notNull()
-    lateinit var albumKey: String
-    lateinit var artist: String
+    var albumKey: String
+    var artist: String?
     var tracks: Int by Delegates.notNull()
 
     constructor(cursor: Cursor){
         id          = cursor.getLong(   cursor.getColumnIndex(MediaStore.Audio.Albums._ID))
         album       = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM))
-        albumArt    = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
+        //albumArt    = Uri.parse( cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART)))
+        albumArt = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))?.let {
+            Uri.parse(it)
+        } ?: null
         albumId     = cursor.getLong(   cursor.getColumnIndex(MediaStore.Audio.Media._ID))
         albumKey    = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_KEY))
         artist      = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST))
@@ -53,7 +57,7 @@ class Album {
             return albums
         }
 
-        fun getArtByAlbumId(activity: Context,albumId: Long):String?{
+        fun getArtByAlbumId(activity: Context,albumId: Long):Uri?{
             val resolver = activity.contentResolver
             val SELECTION_ARG = arrayOf("")
             SELECTION_ARG[0] = albumId.toString()
