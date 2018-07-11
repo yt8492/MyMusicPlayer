@@ -1,29 +1,36 @@
-package jp.zliandroid.mymusicplayer
+package jp.zliandroid.mymusicplayer.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentManager
+import android.support.v4.content.PermissionChecker
 import android.support.v4.view.GravityCompat
-import android.support.v4.app.FragmentTabHost
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.TabHost
-import jp.zliandroid.mymusicplayer.R.id.*
-import jp.zliandroid.mymusicplayer.dummy.DummyContent
+import android.widget.Toast
+import jp.zliandroid.mymusicplayer.R
+import jp.zliandroid.mymusicplayer.RuntimePermissionUtils
+import jp.zliandroid.mymusicplayer.adapter.MyFragmentPagerAdapter
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
 import kotlinx.android.synthetic.main.content_wakeup.*
 
+const val PERMISSION_REQUEST_CODE = 1
+
 class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+
+    lateinit var mFragmentManager: FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wakeup)
+        checkPermission()
         setSupportActionBar(toolbar)
         Log.d("debug","start")
 
@@ -34,9 +41,14 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        tabs.addTab(tabs.newTab().setText("Tab1"))
-        tabs.addTab(tabs.newTab().setText("Tab2"))
+    }
 
+    private fun setupFragment(){
+        mFragmentManager = supportFragmentManager
+
+        pager.adapter = MyFragmentPagerAdapter(mFragmentManager)
+
+        tabs.setupWithViewPager(pager)
     }
 
     override fun onBackPressed() {
@@ -85,8 +97,31 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             }
         }
-
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0){
+            if (RuntimePermissionUtils.checkGrantResults(*grantResults)) {
+                setupFragment()
+            } else {
+                Toast.makeText(this, "権限ないです", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    private fun checkPermission(){
+        if (RuntimePermissionUtils.hasSelfPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            setupFragment()
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                requestPermissions(permissions, PERMISSION_REQUEST_CODE)
+
+            }
+        }
     }
 }
