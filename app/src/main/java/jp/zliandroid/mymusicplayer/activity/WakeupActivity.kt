@@ -32,16 +32,18 @@ const val PERMISSION_REQUEST_CODE = 1
 class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AlbumListFragment.FragmentListener, TrackListFragment.FragmentListener{
 
     override fun onClickListItem(track: Track) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(this,"Clicked track",Toast.LENGTH_SHORT).show()
     }
 
     override fun onClickListItem(album: Album) {
+        Toast.makeText(this,"Clicked album",Toast.LENGTH_SHORT).show()
         fragmentTransaction = mFragmentManager.beginTransaction()
-        val trackListFragment = TrackListFragment()
+        val trackListFragment = TrackListFragment.newInstance(1)
         val args = Bundle()
         args.putSerializable("album",album)
         trackListFragment.arguments = args
-        fragmentTransaction.replace(R.id.tabs_container,trackListFragment)
+        fragmentTransaction.add(R.id.tabs_container,trackListFragment)
+        fragmentTransaction.commit()
     }
 
     lateinit var mFragmentManager: FragmentManager

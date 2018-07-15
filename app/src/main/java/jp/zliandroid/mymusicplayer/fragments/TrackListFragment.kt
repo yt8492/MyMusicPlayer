@@ -12,10 +12,9 @@ import android.view.ViewGroup
 import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.Track
+import jp.zliandroid.mymusicplayer.adapter.MyTrackRecyclerViewAdapter
 
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
-import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent.DummyItem
-import kotlinx.android.synthetic.main.fragment_file.*
 
 /**
  * A fragment representing a list of Items.
@@ -35,9 +34,7 @@ class TrackListFragment : Fragment() {
         arguments?.let {
             args ->
             columnCount = args.getInt(ARG_COLUMN_COUNT)
-            (args.getSerializable("albumId") as? Album)?.let {
-                album = it
-            }
+            album = args.getSerializable("album") as Album
         }
     }
 
@@ -52,7 +49,7 @@ class TrackListFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = MyTrackRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                adapter = MyTrackRecyclerViewAdapter(Track.getItemsByAlbumId(this.context,album.albumId), listener)
             }
         }
         return view
