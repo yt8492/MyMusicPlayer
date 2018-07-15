@@ -54,7 +54,6 @@ class AlbumListFragment : Fragment() {
         return view
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is FragmentListener) {
@@ -79,7 +78,7 @@ class AlbumListFragment : Fragment() {
      * for more information.
      */
     interface FragmentListener{
-        fun onClickListItem()
+        fun onClickListItem(album: Album)
     }
 
     companion object {

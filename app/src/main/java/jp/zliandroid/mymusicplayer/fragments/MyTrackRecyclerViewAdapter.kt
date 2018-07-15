@@ -1,55 +1,49 @@
-package jp.zliandroid.mymusicplayer.adapter
+package jp.zliandroid.mymusicplayer.fragments
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 
-import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment.FragmentListener
+
+import jp.zliandroid.mymusicplayer.fragments.TrackListFragment.OnListFragmentInteractionListener
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent.DummyItem
 
-import kotlinx.android.synthetic.main.fragment_album.view.*
+import kotlinx.android.synthetic.main.fragment_track.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [FragmentListener].
+ * specified [OnListFragmentInteractionListener].
+ * TODO: Replace the implementation with code for your data type.
  */
-class MyAlbumRecyclerViewAdapter(
-        private val mValues: List<Album>,
-        private val mListener: FragmentListener?)
-    : RecyclerView.Adapter<MyAlbumRecyclerViewAdapter.ViewHolder>() {
+class MyTrackRecyclerViewAdapter(
+        private val mValues: List<DummyItem>,
+        private val mListener: OnListFragmentInteractionListener?)
+    : RecyclerView.Adapter<MyTrackRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as Album
+            val item = v.tag as DummyItem
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onClickListItem(item)
+            mListener?.onListFragmentInteraction(item)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_album, parent, false)
+                .inflate(R.layout.fragment_track, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        item.albumArt?.let {
-            holder.albumArt.setImageURI(it)
-        } ?: run{
-            holder.albumArt.setImageResource(R.drawable.dummy_album_art_slim)
-        }
-        holder.albumTile.text = item.album
-        holder.artist.text = item.artist
+        holder.mIdView.text = item.id
+        holder.mContentView.text = item.content
 
         with(holder.mView) {
             tag = item
@@ -60,12 +54,11 @@ class MyAlbumRecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val albumArt: ImageView = mView.album_art
-        val albumTile: TextView = mView.album_title
-        val artist: TextView = mView.artist
+        val mIdView: TextView = mView.item_number
+        val mContentView: TextView = mView.content
 
         override fun toString(): String {
-            return super.toString() + " '" + albumTile.text + "'"
+            return super.toString() + " '" + mContentView.text + "'"
         }
     }
 }

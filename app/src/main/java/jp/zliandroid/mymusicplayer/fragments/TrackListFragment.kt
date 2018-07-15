@@ -9,28 +9,35 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
+import jp.zliandroid.mymusicplayer.Track
 
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent.DummyItem
+import kotlinx.android.synthetic.main.fragment_file.*
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [TrackListFragment.OnListFragmentInteractionListener] interface.
+ * [TrackListFragment.FragmentListener] interface.
  */
 class TrackListFragment : Fragment() {
 
     // TODO: Customize parameters
     private var columnCount = 1
-
-    private var listener: OnListFragmentInteractionListener? = null
+    private lateinit var album: Album
+    private var listener: FragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
+            args ->
+            columnCount = args.getInt(ARG_COLUMN_COUNT)
+            (args.getSerializable("albumId") as? Album)?.let {
+                album = it
+            }
         }
     }
 
@@ -53,7 +60,7 @@ class TrackListFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
+        if (context is FragmentListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
@@ -76,9 +83,8 @@ class TrackListFragment : Fragment() {
      * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+    interface FragmentListener{
+        fun onClickListItem(track: Track)
     }
 
     companion object {
