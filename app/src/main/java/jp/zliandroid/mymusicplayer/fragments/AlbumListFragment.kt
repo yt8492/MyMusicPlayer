@@ -25,7 +25,7 @@ class AlbumListFragment : Fragment() {
 
     private var columnCount = 1
 
-    private var listener: FragmentListener? = null
+    private var listener: AlbumListFragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +56,7 @@ class AlbumListFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is FragmentListener) {
+        if (context is AlbumListFragmentListener) {
             listener = context
         }
     }
@@ -77,7 +77,7 @@ class AlbumListFragment : Fragment() {
      * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
      * for more information.
      */
-    interface FragmentListener{
+    interface AlbumListFragmentListener{
         fun onClickListItem(album: Album)
     }
 

@@ -10,22 +10,21 @@ import jp.zliandroid.mymusicplayer.Track
 import jp.zliandroid.mymusicplayer.fragments.TrackListFragment
 
 
-import jp.zliandroid.mymusicplayer.fragments.TrackListFragment.FragmentListener
+import jp.zliandroid.mymusicplayer.fragments.TrackListFragment.TrackListFragmentListener
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_track.view.*
-import android.R.attr.duration
 
 
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
+ * specified [TrackListFragmentListener].
  * TODO: Replace the implementation with code for your data type.
  */
 class MyTrackRecyclerViewAdapter(
         private val mValues: List<Track>,
-        private val mListener: FragmentListener?)
+        private val mListener: TrackListFragmentListener?)
     : RecyclerView.Adapter<MyTrackRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener

@@ -10,7 +10,7 @@ import android.widget.TextView
 import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 
-import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment.FragmentListener
+import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment.AlbumListFragmentListener
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_album.view.*
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_album.view.*
  */
 class MyAlbumRecyclerViewAdapter(
         private val mValues: List<Album>,
-        private val mListener: FragmentListener?)
+        private val mListener: AlbumListFragmentListener?)
     : RecyclerView.Adapter<MyAlbumRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
