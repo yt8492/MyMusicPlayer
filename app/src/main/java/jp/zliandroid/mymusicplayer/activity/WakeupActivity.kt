@@ -42,6 +42,7 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     override fun onClickListItem(album: Album) {
         Toast.makeText(this,"Clicked album",Toast.LENGTH_SHORT).show()
+        Log.d("debug","albumId=" + album.albumId)
         fragmentTransaction = mFragmentManager.beginTransaction()
         trackListFragment = TrackListFragment()
         val args = Bundle()

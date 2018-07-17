@@ -35,12 +35,12 @@ class TrackListFragment : Fragment() {
         arguments?.let {
             args ->
             columnCount = args.getInt(ARG_COLUMN_COUNT)
-            val albumId = args.getLong("albumId")
-            this.context?.let {
+            context?.let {
+                val albumId = args.getLong("albumId")
                 album = Album.getAlbumByAlbumId(it ,albumId)
+                Toast.makeText(this.context,"TrackListFragment",Toast.LENGTH_SHORT).show()
             }
         }
-        Toast.makeText(this.context,"TrackListFragment",Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
