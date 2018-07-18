@@ -42,11 +42,10 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     override fun onClickListItem(album: Album) {
         Toast.makeText(this,"Clicked album",Toast.LENGTH_SHORT).show()
-        Log.d("debug","albumId=" + album.albumId)
-        fragmentTransaction = mFragmentManager.beginTransaction()
         trackListFragment = TrackListFragment()
         val args = Bundle()
         args.putLong("albumId",album.albumId)
+        fragmentTransaction = mFragmentManager.beginTransaction()
         trackListFragment.arguments = args
         fragmentTransaction.hide(tabFragment)
         fragmentTransaction.add(R.id.fragment_container,trackListFragment)
@@ -80,6 +79,10 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         fragmentTransaction = mFragmentManager.beginTransaction()
         tabFragment = TabFragment()
         fragmentTransaction.add(R.id.fragment_container, tabFragment)
+        //trackListFragment = TrackListFragment.newInstance(33 )
+        //val args = Bundle()
+        //args.putLong("albumId",33)
+        //fragmentTransaction.add(R.id.fragment_container,trackListFragment)
         fragmentTransaction.commit()
 
     }
