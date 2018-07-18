@@ -1,4 +1,4 @@
-package jp.zliandroid.mymusicplayer
+package jp.zliandroid.mymusicplayer.Service
 
 import android.app.Service
 import android.content.Intent

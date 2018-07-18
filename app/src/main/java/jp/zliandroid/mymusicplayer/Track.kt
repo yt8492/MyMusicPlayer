@@ -91,6 +91,28 @@ class Track : Serializable {
             return tracks
         }
 
+        fun getUrisByAlbumId(context: Context, albumId: Long): List<Uri>{
+            val uris: ArrayList<Uri> = arrayListOf()
+            val resolver: ContentResolver = context.contentResolver
+            val SELECTION_ARG: Array<String> = arrayOf("")
+            SELECTION_ARG[0] = albumId.toString()
+            val cursor: Cursor = resolver.query(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    Track.COLUMNS,
+                    MediaStore.Audio.Media.ALBUM_ID + "= ?",
+                    SELECTION_ARG,
+                    null
+            )
+            while (cursor.moveToNext()){
+                if (cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)) < 3000){
+                    continue
+                }
+                uris.add(Track(cursor).uri)
+            }
+            cursor.close()
+            return uris
+        }
+
     }
 
 }

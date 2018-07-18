@@ -1,6 +1,7 @@
 package jp.zliandroid.mymusicplayer.fragments
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -22,6 +23,7 @@ import jp.zliandroid.mymusicplayer.adapter.MyTrackRecyclerViewAdapter
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
 import kotlinx.android.synthetic.main.fragment_track_list.*
 import kotlinx.android.synthetic.main.fragment_track_list.view.*
+import java.text.FieldPosition
 
 /**
  * A fragment representing a list of Items.
@@ -107,7 +109,7 @@ class TrackListFragment : Fragment() {
      * for more information.
      */
     interface TrackListFragmentListener{
-        fun onClickListItem(track: Track)
+        fun onClickListItem(albumId: Long, position: Int)
     }
 
     companion object {

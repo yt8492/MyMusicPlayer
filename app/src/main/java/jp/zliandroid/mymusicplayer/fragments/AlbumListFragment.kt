@@ -83,7 +83,7 @@ class AlbumListFragment : Fragment() {
      * for more information.
      */
     interface AlbumListFragmentListener{
-        fun onClickListItem(album: Album)
+        fun onClickListItem(albumId: Long)
     }
 
     companion object {

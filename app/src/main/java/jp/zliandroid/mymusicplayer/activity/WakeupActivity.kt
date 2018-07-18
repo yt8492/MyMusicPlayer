@@ -2,6 +2,7 @@ package jp.zliandroid.mymusicplayer.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,19 +15,16 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
-import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.RuntimePermissionUtils
-import jp.zliandroid.mymusicplayer.Track
-import jp.zliandroid.mymusicplayer.adapter.MyFragmentPagerAdapter
+import jp.zliandroid.mymusicplayer.Service.MusicConnection
+import jp.zliandroid.mymusicplayer.Service.MusicPlayService
 import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment
 import jp.zliandroid.mymusicplayer.fragments.TabFragment
 import jp.zliandroid.mymusicplayer.fragments.TrackListFragment
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
-import kotlinx.android.synthetic.main.content_wakeup.*
 
 const val PERMISSION_REQUEST_CODE = 1
 
@@ -36,15 +34,15 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onClickListItem(track: Track) {
-        Toast.makeText(this,"Clicked track",Toast.LENGTH_SHORT).show()
+    override fun onClickListItem(albumId: Long, position: Int) {
+        Toast.makeText(this,"albumId = $albumId, position = $position",Toast.LENGTH_SHORT).show()
+        startService(albumId,position)
     }
 
-    override fun onClickListItem(album: Album) {
-        Toast.makeText(this,"Clicked album",Toast.LENGTH_SHORT).show()
+    override fun onClickListItem(albumId: Long) {
         trackListFragment = TrackListFragment()
         val args = Bundle()
-        args.putLong("albumId",album.albumId)
+        args.putLong("albumId",albumId)
         fragmentTransaction = mFragmentManager.beginTransaction()
         trackListFragment.arguments = args
         fragmentTransaction.hide(tabFragment)
@@ -138,13 +136,16 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0){
+        if(requestCode == PERMISSION_REQUEST_CODE && grantResults.isNotEmpty()){
             if (RuntimePermissionUtils.checkGrantResults(*grantResults)) {
                 setupFragment()
             } else {
                 Toast.makeText(this, "権限ないです", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    fun startService(albumId: Long, position: Int){
     }
 
     @SuppressLint("NewApi")

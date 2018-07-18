@@ -31,7 +31,7 @@ class MyAlbumRecyclerViewAdapter(
             val item = v.tag as Album
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onClickListItem(item)
+            mListener?.onClickListItem(item.albumId)
         }
     }
 

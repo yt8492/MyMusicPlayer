@@ -23,9 +23,14 @@
         </activity>
 
         <service
-            android:name=".MusicPlayService"
+            android:name=".Service.MusicPlayService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <receiver
+            android:name=".Service.MusicReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>
