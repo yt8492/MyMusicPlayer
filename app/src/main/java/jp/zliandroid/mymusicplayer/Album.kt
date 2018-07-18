@@ -5,9 +5,10 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import java.io.Serializable
 import kotlin.properties.Delegates
 
-class Album {
+class Album: Serializable {
 
     var id: Long by Delegates.notNull()
     var album: String
@@ -31,7 +32,7 @@ class Album {
     }
 
     companion object {
-        val FILLED_PROJECTION: Array<String> = arrayOf(
+        private val FILLED_PROJECTION: Array<String> = arrayOf(
                 MediaStore.Audio.Albums._ID,
                 MediaStore.Audio.Albums.ALBUM,
                 MediaStore.Audio.Albums.ALBUM_ART,
@@ -57,8 +58,8 @@ class Album {
             return albums
         }
 
-        fun getArtByAlbumId(activity: Context,albumId: Long):Uri?{
-            val resolver = activity.contentResolver
+        fun getArtByAlbumId(context: Context,albumId: Long):Uri?{
+            val resolver = context.contentResolver
             val SELECTION_ARG = arrayOf("")
             SELECTION_ARG[0] = albumId.toString()
             val cursor = resolver.query(
@@ -72,6 +73,23 @@ class Album {
             val album = Album(cursor)
             cursor.close()
             return album.albumArt
+        }
+
+        fun getAlbumByAlbumId(context: Context, albumId: Long):Album{
+            val resolver = context.contentResolver
+            val SELECTION_ARG = arrayOf("")
+            SELECTION_ARG[0] = albumId.toString()
+            val cursor = resolver.query(
+                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                    Album.FILLED_PROJECTION,
+                    MediaStore.Audio.Albums._ID + "= ?",
+                    SELECTION_ARG,
+                    null
+            )
+            cursor.moveToFirst()
+            val album = Album(cursor)
+            cursor.close()
+            return album
         }
     }
 
