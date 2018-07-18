@@ -30,20 +30,16 @@ import kotlinx.android.synthetic.main.fragment_track_list.view.*
  */
 class TrackListFragment : Fragment() {
 
-    // TODO: Customize parameters
-    private var columnCount = 1
     private lateinit var album: Album
     private var listener: TrackListFragmentListener? = null
-    private var backListener: BackListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
             args ->
-            columnCount = args.getInt(ARG_COLUMN_COUNT)
             context?.let {
-                val albumId = args.getLong("albumId")
+                val albumId = args.getLong(ARG_ALBUM_ID)
                 album = Album.getAlbumByAlbumId(it ,albumId)
             }
         }
@@ -57,10 +53,7 @@ class TrackListFragment : Fragment() {
         // Set the adapter
         if (view is LinearLayout){
             with(view){
-                list.layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
+                list.layoutManager = LinearLayoutManager(context)
                 Log.d("debug","set adapter")
                 val trackList = Track.getItemsByAlbumId(context,album.albumId)
                 trackList.forEach {
@@ -82,7 +75,7 @@ class TrackListFragment : Fragment() {
             album_title_art.setImageResource(R.drawable.dummy_album_art_slim)
         }
         album_title.text = album.album
-        track_count.text = "${album.tracks} tracks"
+        track_count.text = "${album.tracks}曲"
     }
 
     override fun onAttach(context: Context) {
@@ -99,6 +92,9 @@ class TrackListFragment : Fragment() {
         listener = null
     }
 
+
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -114,14 +110,11 @@ class TrackListFragment : Fragment() {
         fun onClickListItem(track: Track)
     }
 
-    interface BackListener{
-        fun onBack()
-    }
-
     companion object {
 
         // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
+        const val ARG_ALBUM_ID = "albumId"
+        const val NAME = "TrackListFragment"
 
         // TODO: Customize parameter initialization
         @JvmStatic

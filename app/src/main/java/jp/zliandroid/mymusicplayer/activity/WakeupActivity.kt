@@ -48,8 +48,9 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         fragmentTransaction = mFragmentManager.beginTransaction()
         trackListFragment.arguments = args
         fragmentTransaction.hide(tabFragment)
-        fragmentTransaction.add(R.id.fragment_container,trackListFragment)
-        fragmentTransaction.commit()
+        fragmentTransaction.add(R.id.fragment_container, trackListFragment, TrackListFragment.NAME)
+        fragmentTransaction.addToBackStack(TrackListFragment.NAME)
+        fragmentTransaction.commitAllowingStateLoss()
     }
 
     private lateinit var mFragmentManager: FragmentManager
@@ -78,20 +79,17 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun setupFragment(){
         fragmentTransaction = mFragmentManager.beginTransaction()
         tabFragment = TabFragment()
-        fragmentTransaction.add(R.id.fragment_container, tabFragment)
-        //trackListFragment = TrackListFragment.newInstance(33 )
-        //val args = Bundle()
-        //args.putLong("albumId",33)
-        //fragmentTransaction.add(R.id.fragment_container,trackListFragment)
+        fragmentTransaction.add(R.id.fragment_container, tabFragment, TabFragment.NAME)
+        fragmentTransaction.addToBackStack(TabFragment.NAME)
         fragmentTransaction.commit()
 
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            drawer_layout.isDrawerOpen(GravityCompat.START) -> drawer_layout.closeDrawer(GravityCompat.START)
+            mFragmentManager.backStackEntryCount == 1 -> finish()
+            else -> super.onBackPressed()
         }
     }
 
@@ -105,11 +103,12 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
