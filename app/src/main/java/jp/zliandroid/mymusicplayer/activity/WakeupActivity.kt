@@ -35,7 +35,7 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     override fun onClickListItem(albumId: Long, position: Int) {
-        Toast.makeText(this,"albumId = $albumId, position = $position",Toast.LENGTH_SHORT).show()
+        //vToast.makeText(this,"albumId = $albumId, position = $position",Toast.LENGTH_SHORT).show()
         startService(albumId,position)
     }
 
@@ -146,6 +146,10 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     fun startService(albumId: Long, position: Int){
+        val intent = Intent(this,MusicPlayService().javaClass)
+        intent.putExtra("albumId", albumId)
+        intent.putExtra("position", position)
+        this.startService(intent)
     }
 
     @SuppressLint("NewApi")
