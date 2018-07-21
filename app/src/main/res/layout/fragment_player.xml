@@ -36,7 +36,7 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="300dp"
+            android:layout_height="280dp"
             android:layout_margin="10dp" />
 
         <SeekBar
@@ -47,15 +47,61 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+            <Chronometer
+                android:id="@+id/meter_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_weight="1"
+                android:textAlignment="textStart"
+                android:textSize="18sp"
+                tools:ignore="RtlCompat" />
+
+            <Chronometer
+                android:id="@+id/meter_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:textSize="18sp"
+                tools:ignore="RtlCompat" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <ImageButton
+                android:id="@+id/music_previous"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/back" />
 
             <ImageButton
                 android:id="@+id/music_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:layout_weight="1"
-                android:src="@android:drawable/ic_media_play" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/start" />
+
+            <ImageButton
+                android:id="@+id/music_next"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:src="@drawable/next" />
+
         </LinearLayout>
 
 

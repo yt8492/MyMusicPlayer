@@ -23,12 +23,12 @@
         </activity>
 
         <service
-            android:name=".Service.MusicPlayService"
+            android:name=".service.MusicPlayService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name=".Service.MusicReceiver"
+            android:name=".service.MusicReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
     </application>

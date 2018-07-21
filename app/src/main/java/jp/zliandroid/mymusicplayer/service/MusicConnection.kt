@@ -1,4 +1,4 @@
-package jp.zliandroid.mymusicplayer.Service
+package jp.zliandroid.mymusicplayer.service
 
 import android.content.ComponentName
 import android.content.ServiceConnection

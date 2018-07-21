@@ -2,7 +2,10 @@ package jp.zliandroid.mymusicplayer.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
+import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,11 +21,12 @@ import android.view.MenuItem
 import android.widget.Toast
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.RuntimePermissionUtils
-import jp.zliandroid.mymusicplayer.Service.MusicConnection
-import jp.zliandroid.mymusicplayer.Service.MusicPlayService
+import jp.zliandroid.mymusicplayer.service.MusicPlayService
 import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment
 import jp.zliandroid.mymusicplayer.fragments.TabFragment
 import jp.zliandroid.mymusicplayer.fragments.TrackListFragment
+import jp.zliandroid.mymusicplayer.service.MusicConnection
+import jp.zliandroid.mymusicplayer.service.MusicReceiver
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
 
@@ -145,7 +149,7 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
     }
 
-    fun startService(albumId: Long, position: Int){
+    private fun startService(albumId: Long, position: Int){
         val intent = Intent(this,MusicPlayService().javaClass)
         intent.putExtra("albumId", albumId)
         intent.putExtra("position", position)
