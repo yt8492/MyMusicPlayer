@@ -38,8 +38,7 @@ class TrackListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
-            args ->
+        arguments?.let { args ->
             context?.let {
                 val albumId = args.getLong(ARG_ALBUM_ID)
                 album = Album.getAlbumByAlbumId(it ,albumId)

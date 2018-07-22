@@ -1,19 +1,24 @@
 package jp.zliandroid.mymusicplayer.fragments
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import jp.zliandroid.mymusicplayer.Album
 
 import jp.zliandroid.mymusicplayer.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import jp.zliandroid.mymusicplayer.Track
+import jp.zliandroid.mymusicplayer.service.MusicPlayService
+import kotlinx.android.synthetic.main.fragment_player.*
+import java.text.FieldPosition
 
 /**
  * A simple [Fragment] subclass.
@@ -25,17 +30,28 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class PlayerFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: PlayerFragmentListener? = null
+    private lateinit var track: Track
+    private lateinit var receiver: MyReceiver
+    private  lateinit var album: Album
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+        arguments?.let { args ->
+            context?.let {
+                receiver = MyReceiver()
+                val intentFilter = IntentFilter()
+                intentFilter.addAction(MusicPlayService.ACTION_SET_PARAMS)
+                it.registerReceiver(receiver, intentFilter)
+
+                val albumId = args.getLong("albumId")
+                album = Album.getAlbumByAlbumId(it, albumId)
+                val position = args.getInt("position")
+                val tracks = Track.getItemsByAlbumId(it, albumId)
+                track = tracks[position]
+            }
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -44,9 +60,9 @@ class PlayerFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_player, container, false)
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setParams()
     }
 
     override fun onAttach(context: Context) {
@@ -75,8 +91,30 @@ class PlayerFragment : Fragment() {
      * for more information.
      */
     interface PlayerFragmentListener {
-        // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
+    }
+
+    private fun setParams(){
+        music_title.text = track.title
+        music_artist.text = track.artist
+        music_album_title.text = track.album
+        album.albumArt?.let {
+            music_album_art.setImageURI(it)
+        }
+        meter_total.base = SystemClock.elapsedRealtime() - track.duration
+    }
+
+    inner class MyReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Log.d("debug", "receive")
+            if (intent.action.equals(MusicPlayService.ACTION_SET_PARAMS)) {
+                val trackId = intent.getLongExtra("trackId", -1)
+                Log.d("debug", "trackId = $trackId")
+                track = Track.getItemByTrackId(context, trackId)
+                setParams()
+            }
+        }
+
     }
 
     companion object {
@@ -89,13 +127,19 @@ class PlayerFragment : Fragment() {
          * @return A new instance of fragment PlayerFragment.
          */
         // TODO: Rename and change types and number of parameters
+        const val NAME = "PlayerFragment"
+        const val MUSIC_START = 1
+        const val MUSIC_STOP = 2
+        const val MUSIC_BACK = 3
+        const val MUSIC_NEXT = 4
+
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(albumId: Long, position: Int) =
                 PlayerFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+                        putLong("albumId", albumId)
+                        putInt("position", position)
                     }
-                }
+        }
     }
 }

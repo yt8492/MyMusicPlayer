@@ -17,7 +17,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.setParams" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

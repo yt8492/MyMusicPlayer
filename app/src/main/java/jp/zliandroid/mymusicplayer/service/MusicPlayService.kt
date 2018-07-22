@@ -31,29 +31,33 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener {
                     release()
                 }
             }
-            mediaPlayer = MediaPlayer.create(this, tracks[nowPosition].uri)
+            startPlayer()
             alreadyPlayed = true
-            mediaPlayer.start()
-            Log.d("debug","start playing")
-            if (nowPosition < tracks.size + 1){
-               //mediaPlayer.setNextMediaPlayer(MediaPlayer.create(this, tracks[++nowPosition].uri))
-            }
-            mediaPlayer.setOnCompletionListener(this)
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onCompletion(p0: MediaPlayer?) {
+    override fun onCompletion(mp: MediaPlayer?) {
         if(nowPosition < tracks.size + 1){
             Log.d("debug","completed")
-            mediaPlayer = MediaPlayer.create(this, tracks[++nowPosition].uri)
-            mediaPlayer.start()
-            mediaPlayer.setOnCompletionListener(this)
+            nowPosition++
+            startPlayer()
         }
 
     }
 
+    private fun startPlayer(){
+        val broadcastIntent = Intent()
+        broadcastIntent.action = ACTION_SET_PARAMS
+        broadcastIntent.putExtra("trackId", tracks[nowPosition].id)
+        sendBroadcast(broadcastIntent)
+        Log.d("debug", "send broadcast id = ${tracks[nowPosition].id}")
+        mediaPlayer = MediaPlayer.create(this, tracks[nowPosition].uri)
+        mediaPlayer.start()
+        mediaPlayer.setOnCompletionListener(this)
+    }
+
     companion object {
-        const val SERVICE_ACTION = "MusicPlayAction"
+        const val ACTION_SET_PARAMS = "android.intent.action.setParams"
     }
 }
