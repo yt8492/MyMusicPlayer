@@ -38,10 +38,13 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener {
     }
 
     override fun onCompletion(mp: MediaPlayer?) {
-        if(nowPosition < tracks.size + 1){
+        nowPosition++
+        if(nowPosition < tracks.size){
             Log.d("debug","completed")
-            nowPosition++
             startPlayer()
+        } else {
+            mediaPlayer.release()
+            alreadyPlayed = false
         }
 
     }

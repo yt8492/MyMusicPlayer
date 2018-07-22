@@ -95,6 +95,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setParams(){
+        Log.d("debug", "trackTitle = ${track.title}")
         music_title.text = track.title
         music_artist.text = track.artist
         music_album_title.text = track.album
@@ -102,6 +103,7 @@ class PlayerFragment : Fragment() {
             music_album_art.setImageURI(it)
         }
         meter_total.base = SystemClock.elapsedRealtime() - track.duration
+        music_title.isSelected = true
     }
 
     inner class MyReceiver : BroadcastReceiver() {

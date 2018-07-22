@@ -17,7 +17,16 @@
             android:id="@+id/music_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:duplicateParentState="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:freezesText="true"
             android:textAlignment="center"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <TextView
