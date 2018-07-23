@@ -17,7 +17,11 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.setParams" />
+                <action android:name="android.intent.action.SET_PARAMS" />
+                <action android:name="android.intent.action.ACTION_SET_NOW_POSITION" />
+                <action android:name="android.intent.action.CHANGE_SEEKBAR" />
+                <action android:name="android.intent.action.SEND_CONTROL"/>
+                <action android:name="android.intent.action.CONNECT_SERVICE" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -27,10 +31,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <receiver
-            android:name=".service.MusicReceiver"
-            android:enabled="true"
-            android:exported="true"></receiver>
     </application>
 
 </manifest>

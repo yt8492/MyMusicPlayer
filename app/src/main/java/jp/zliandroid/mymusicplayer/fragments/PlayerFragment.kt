@@ -12,13 +12,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import jp.zliandroid.mymusicplayer.Album
+import android.widget.SeekBar
 
+import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.Track
 import jp.zliandroid.mymusicplayer.service.MusicPlayService
+
 import kotlinx.android.synthetic.main.fragment_player.*
-import java.text.FieldPosition
+import java.net.MalformedURLException
 
 /**
  * A simple [Fragment] subclass.
@@ -29,19 +31,22 @@ import java.text.FieldPosition
  * create an instance of this fragment.
  *
  */
-class PlayerFragment : Fragment() {
+class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+
     private var listener: PlayerFragmentListener? = null
     private lateinit var track: Track
-    private lateinit var receiver: MyReceiver
+    private lateinit var receiver: MusicReceiver
     private  lateinit var album: Album
+    private var playing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { args ->
             context?.let {
-                receiver = MyReceiver()
+                receiver = MusicReceiver()
                 val intentFilter = IntentFilter()
                 intentFilter.addAction(MusicPlayService.ACTION_SET_PARAMS)
+                intentFilter.addAction(MusicPlayService.ACTION_SET_CURRENT_POSITION)
                 it.registerReceiver(receiver, intentFilter)
 
                 val albumId = args.getLong("albumId")
@@ -76,6 +81,9 @@ class PlayerFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+        context?.let {
+            it.unregisterReceiver(receiver)
+        }
         listener = null
     }
 
@@ -91,7 +99,7 @@ class PlayerFragment : Fragment() {
      * for more information.
      */
     interface PlayerFragmentListener {
-        fun onFragmentInteraction(uri: Uri)
+        fun onButtonClick(controlType: Int)
     }
 
     private fun setParams(){
@@ -99,21 +107,94 @@ class PlayerFragment : Fragment() {
         music_title.text = track.title
         music_artist.text = track.artist
         music_album_title.text = track.album
+        music_title.isSelected = true
         album.albumArt?.let {
             music_album_art.setImageURI(it)
         }
         meter_total.base = SystemClock.elapsedRealtime() - track.duration
-        music_title.isSelected = true
+        seek_bar.progress = 0
+        seek_bar.max = track.duration.toInt()
+        seek_bar.setOnSeekBarChangeListener(this)
+        if (playing) {
+            music_play.setImageResource(R.drawable.start)
+        } else {
+            music_play.setImageResource(R.drawable.stop)
+        }
+        music_play.setOnClickListener(this)
+        music_previous.setOnClickListener(this)
+        music_next.setOnClickListener(this)
     }
 
-    inner class MyReceiver : BroadcastReceiver() {
+    private fun setCurrentPosition(currentPosition: Int){
+        seek_bar.progress = currentPosition
+        meter_now.base = SystemClock.elapsedRealtime() - currentPosition
+    }
+
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        /*val broadcastIntent = Intent()
+        broadcastIntent.action = ACTION_SEND_CONTROL
+        broadcastIntent.putExtra("type", MUSIC_STOP)
+        sendBroadcast(broadcastIntent)*/
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        seekBar?.let {
+            val currentPosition = it.progress
+            //meter_now.base = SystemClock.elapsedRealtime() - currentPosition
+            val broadcastIntent = Intent()
+            broadcastIntent.action = ACTION_CHANGE_SEEKBAR
+            broadcastIntent.putExtra("currentPosition", currentPosition)
+            sendBroadcast(broadcastIntent)
+        }
+
+    }
+
+    private fun sendBroadcast(intent: Intent){
+        context?.let {
+            it.sendBroadcast(intent)
+        }
+    }
+
+    override fun onClick(v: View?) {
+        v?.let { view ->
+            listener?.let { clickListener ->
+                when(view){
+                    music_play ->
+                        if (playing){
+                            music_play.setImageResource(R.drawable.start)
+                            clickListener.onButtonClick(MUSIC_STOP)
+                        } else {
+                            music_play.setImageResource(R.drawable.stop)
+                            clickListener.onButtonClick(MUSIC_START)
+                        }
+
+                    music_previous ->
+                        clickListener.onButtonClick(MUSIC_BACK)
+
+                    music_next ->
+                        clickListener.onButtonClick(MUSIC_NEXT)
+                }
+            }
+        }
+    }
+
+    inner class MusicReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("debug", "receive")
+            //Log.d("debug", "receive")
             if (intent.action.equals(MusicPlayService.ACTION_SET_PARAMS)) {
                 val trackId = intent.getLongExtra("trackId", -1)
                 Log.d("debug", "trackId = $trackId")
                 track = Track.getItemByTrackId(context, trackId)
                 setParams()
+            } else if (intent.action.equals(MusicPlayService.ACTION_SET_CURRENT_POSITION)){
+                val currentPosition = intent.getIntExtra("currentPosition",-1)
+                playing = intent.getBooleanExtra("playing",false)
+                //Log.d("debug", "position = $currentPosition")
+                setCurrentPosition(currentPosition)
             }
         }
 
@@ -130,10 +211,13 @@ class PlayerFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         const val NAME = "PlayerFragment"
+
         const val MUSIC_START = 1
         const val MUSIC_STOP = 2
         const val MUSIC_BACK = 3
         const val MUSIC_NEXT = 4
+
+        const val ACTION_CHANGE_SEEKBAR = "android.intent.action.CHANGE_SEEKBAR"
 
         @JvmStatic
         fun newInstance(albumId: Long, position: Int) =

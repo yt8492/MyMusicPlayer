@@ -2,10 +2,7 @@ package jp.zliandroid.mymusicplayer.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,15 +23,13 @@ import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment
 import jp.zliandroid.mymusicplayer.fragments.PlayerFragment
 import jp.zliandroid.mymusicplayer.fragments.TabFragment
 import jp.zliandroid.mymusicplayer.fragments.TrackListFragment
-import jp.zliandroid.mymusicplayer.service.MusicConnection
-import jp.zliandroid.mymusicplayer.service.MusicReceiver
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
 
 const val PERMISSION_REQUEST_CODE = 1
 
-class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, TabFragment.TabFragmentListener,
-        AlbumListFragment.AlbumListFragmentListener, TrackListFragment.TrackListFragmentListener, PlayerFragment.PlayerFragmentListener{
+class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AlbumListFragment.AlbumListFragmentListener,
+        TrackListFragment.TrackListFragmentListener, PlayerFragment.PlayerFragmentListener{
 
     private lateinit var mFragmentManager: FragmentManager
     private lateinit var fragmentTransaction: FragmentTransaction
@@ -42,8 +37,12 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var trackListFragment: TrackListFragment
     private lateinit var playerFragment: PlayerFragment
 
-    override fun onFragmentInteraction(uri: Uri) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onButtonClick(controlType: Int) {
+        Log.d("debug", "onButtonClick")
+        val intent = Intent(this, MusicPlayService::class.java)
+        intent.action = ACTION_SEND_CONTROL
+        intent.putExtra("type", controlType)
+        startService(intent)
     }
 
     override fun onClickListItem(albumId: Long, position: Int) {
@@ -160,7 +159,8 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     private fun startService(albumId: Long, position: Int){
-        val intent = Intent(this,MusicPlayService::class.java)
+        val intent = Intent(this, MusicPlayService::class.java)
+        intent.action = ACTION_CONNECT_SERVICE
         intent.putExtra("albumId", albumId)
         intent.putExtra("position", position)
         this.startService(intent)
@@ -177,5 +177,10 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             }
         }
+    }
+
+    companion object {
+        const val ACTION_CONNECT_SERVICE = "android.intent.action.CONNECT_SERVICE"
+        const val ACTION_SEND_CONTROL = "android.intent.action.SEND_CONTROL"
     }
 }
