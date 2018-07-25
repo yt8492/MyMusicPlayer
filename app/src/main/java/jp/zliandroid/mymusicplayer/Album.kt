@@ -58,23 +58,6 @@ class Album: Serializable {
             return albums
         }
 
-        fun getArtByAlbumId(context: Context,albumId: Long):Uri?{
-            val resolver = context.contentResolver
-            val SELECTION_ARG = arrayOf("")
-            SELECTION_ARG[0] = albumId.toString()
-            val cursor = resolver.query(
-                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                    Album.FILLED_PROJECTION,
-                    MediaStore.Audio.Albums._ID + "= ?",
-                    SELECTION_ARG,
-                    null
-            )
-            cursor.moveToFirst()
-            val album = Album(cursor)
-            cursor.close()
-            return album.albumArt
-        }
-
         fun getAlbumByAlbumId(context: Context, albumId: Long):Album{
             val resolver = context.contentResolver
             val SELECTION_ARG = arrayOf("")

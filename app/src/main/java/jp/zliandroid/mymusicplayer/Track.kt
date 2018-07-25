@@ -91,6 +91,23 @@ class Track : Serializable {
             return tracks
         }
 
+        fun getItemByTrackId(context: Context, trackId: Long): Track{
+            val resolver = context.contentResolver
+            val SELECTION_ARG: Array<String> = arrayOf("")
+            SELECTION_ARG[0] = trackId.toString()
+            val cursor: Cursor = resolver.query(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    Track.COLUMNS,
+                    MediaStore.Audio.Media._ID + "= ?",
+                    SELECTION_ARG,
+                    null
+            )
+            cursor.moveToFirst()
+            val track = Track(cursor)
+            cursor.close()
+            return track
+        }
+
     }
 
 }

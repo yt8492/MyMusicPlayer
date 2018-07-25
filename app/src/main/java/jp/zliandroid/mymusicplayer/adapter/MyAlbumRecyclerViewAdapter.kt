@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.fragment_album.view.*
 
 /**
  * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [FragmentListener].
+ * specified [AlbumListFragmentListener].
  */
 class MyAlbumRecyclerViewAdapter(
         private val mValues: List<Album>,
@@ -31,7 +31,7 @@ class MyAlbumRecyclerViewAdapter(
             val item = v.tag as Album
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onClickListItem(item)
+            mListener?.onClickListItem(item.albumId)
         }
     }
 

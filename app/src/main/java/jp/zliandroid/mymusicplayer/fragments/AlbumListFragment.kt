@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_album_list.*
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [AlbumListFragment.FragmentListener] interface.
+ * [AlbumListFragment.AlbumListFragmentListener] interface.
  */
 class AlbumListFragment : Fragment() {
 
@@ -83,15 +83,13 @@ class AlbumListFragment : Fragment() {
      * for more information.
      */
     interface AlbumListFragmentListener{
-        fun onClickListItem(album: Album)
+        fun onClickListItem(albumId: Long)
     }
 
     companion object {
 
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
                 AlbumListFragment().apply {

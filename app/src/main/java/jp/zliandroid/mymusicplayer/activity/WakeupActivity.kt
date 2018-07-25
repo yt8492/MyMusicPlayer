@@ -2,6 +2,7 @@ package jp.zliandroid.mymusicplayer.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,49 +15,60 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
-import jp.zliandroid.mymusicplayer.Album
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.RuntimePermissionUtils
-import jp.zliandroid.mymusicplayer.Track
-import jp.zliandroid.mymusicplayer.adapter.MyFragmentPagerAdapter
+import jp.zliandroid.mymusicplayer.service.MusicPlayService
 import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment
+import jp.zliandroid.mymusicplayer.fragments.PlayerFragment
 import jp.zliandroid.mymusicplayer.fragments.TabFragment
 import jp.zliandroid.mymusicplayer.fragments.TrackListFragment
 import kotlinx.android.synthetic.main.activity_wakeup.*
 import kotlinx.android.synthetic.main.app_bar_wakeup.*
-import kotlinx.android.synthetic.main.content_wakeup.*
 
 const val PERMISSION_REQUEST_CODE = 1
 
-class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, TabFragment.TabFragmentListener, AlbumListFragment.AlbumListFragmentListener, TrackListFragment.TrackListFragmentListener{
-
-    override fun onFragmentInteraction(uri: Uri) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onClickListItem(track: Track) {
-        Toast.makeText(this,"Clicked track",Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onClickListItem(album: Album) {
-        Toast.makeText(this,"Clicked album",Toast.LENGTH_SHORT).show()
-        trackListFragment = TrackListFragment()
-        val args = Bundle()
-        args.putLong("albumId",album.albumId)
-        fragmentTransaction = mFragmentManager.beginTransaction()
-        trackListFragment.arguments = args
-        fragmentTransaction.hide(tabFragment)
-        fragmentTransaction.add(R.id.fragment_container,trackListFragment)
-        fragmentTransaction.commit()
-    }
+class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, AlbumListFragment.AlbumListFragmentListener,
+        TrackListFragment.TrackListFragmentListener, PlayerFragment.PlayerFragmentListener{
 
     private lateinit var mFragmentManager: FragmentManager
     private lateinit var fragmentTransaction: FragmentTransaction
     private lateinit var tabFragment: TabFragment
     private lateinit var trackListFragment: TrackListFragment
+    private lateinit var playerFragment: PlayerFragment
 
+    override fun onButtonClick(controlType: Int) {
+        Log.d("debug", "onButtonClick")
+        val intent = Intent(this, MusicPlayService::class.java)
+        intent.action = ACTION_SEND_CONTROL
+        intent.putExtra("type", controlType)
+        startService(intent)
+    }
+
+    override fun onClickListItem(albumId: Long, position: Int) {
+        //Toast.makeText(this,"albumId = $albumId, position = $position",Toast.LENGTH_SHORT).show()
+        startService(albumId,position)
+
+        playerFragment = PlayerFragment.newInstance(albumId, position)
+        fragmentTransaction = mFragmentManager.beginTransaction()
+        fragmentTransaction.hide(trackListFragment)
+        fragmentTransaction.add(R.id.fragment_container, playerFragment, PlayerFragment.NAME)
+        fragmentTransaction.addToBackStack(PlayerFragment.NAME)
+        fragmentTransaction.commitAllowingStateLoss()
+
+    }
+
+    override fun onClickListItem(albumId: Long) {
+        trackListFragment = TrackListFragment()
+        val args = Bundle()
+        args.putLong("albumId",albumId)
+        fragmentTransaction = mFragmentManager.beginTransaction()
+        trackListFragment.arguments = args
+        fragmentTransaction.hide(tabFragment)
+        fragmentTransaction.add(R.id.fragment_container, trackListFragment, TrackListFragment.NAME)
+        fragmentTransaction.addToBackStack(TrackListFragment.NAME)
+        fragmentTransaction.commitAllowingStateLoss()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,26 +84,27 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
 
+    }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("debug", "Activity onResume")
     }
 
     private fun setupFragment(){
         fragmentTransaction = mFragmentManager.beginTransaction()
         tabFragment = TabFragment()
-        fragmentTransaction.add(R.id.fragment_container, tabFragment)
-        //trackListFragment = TrackListFragment.newInstance(33 )
-        //val args = Bundle()
-        //args.putLong("albumId",33)
-        //fragmentTransaction.add(R.id.fragment_container,trackListFragment)
+        fragmentTransaction.add(R.id.fragment_container, tabFragment, TabFragment.NAME)
+        fragmentTransaction.addToBackStack(TabFragment.NAME)
         fragmentTransaction.commit()
 
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            drawer_layout.isDrawerOpen(GravityCompat.START) -> drawer_layout.closeDrawer(GravityCompat.START)
+            mFragmentManager.backStackEntryCount == 1 -> finish()
+            else -> super.onBackPressed()
         }
     }
 
@@ -105,11 +118,12 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -139,13 +153,21 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if(requestCode == PERMISSION_REQUEST_CODE && grantResults.size > 0){
+        if(requestCode == PERMISSION_REQUEST_CODE && grantResults.isNotEmpty()){
             if (RuntimePermissionUtils.checkGrantResults(*grantResults)) {
                 setupFragment()
             } else {
                 Toast.makeText(this, "権限ないです", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private fun startService(albumId: Long, position: Int){
+        val intent = Intent(this, MusicPlayService::class.java)
+        intent.action = ACTION_CONNECT_SERVICE
+        intent.putExtra("albumId", albumId)
+        intent.putExtra("position", position)
+        this.startService(intent)
     }
 
     @SuppressLint("NewApi")
@@ -159,5 +181,10 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             }
         }
+    }
+
+    companion object {
+        const val ACTION_CONNECT_SERVICE = "android.intent.action.CONNECT_SERVICE"
+        const val ACTION_SEND_CONTROL = "android.intent.action.SEND_CONTROL"
     }
 }

@@ -28,14 +28,20 @@ class MyTrackRecyclerViewAdapter(
     : RecyclerView.Adapter<MyTrackRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
+    private lateinit var mRecycler: RecyclerView
 
     init {
         mOnClickListener = View.OnClickListener { v ->
             val item = v.tag as Track
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
-            mListener?.onClickListItem(item)
+            mListener?.onClickListItem(item.albumId, mRecycler.getChildAdapterPosition(v))
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+        super.onAttachedToRecyclerView(recyclerView)
+        recyclerView?.let { mRecycler = it }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

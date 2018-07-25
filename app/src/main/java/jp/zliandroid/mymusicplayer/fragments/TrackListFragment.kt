@@ -1,6 +1,7 @@
 package jp.zliandroid.mymusicplayer.fragments
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -22,6 +23,7 @@ import jp.zliandroid.mymusicplayer.adapter.MyTrackRecyclerViewAdapter
 import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
 import kotlinx.android.synthetic.main.fragment_track_list.*
 import kotlinx.android.synthetic.main.fragment_track_list.view.*
+import java.text.FieldPosition
 
 /**
  * A fragment representing a list of Items.
@@ -30,20 +32,15 @@ import kotlinx.android.synthetic.main.fragment_track_list.view.*
  */
 class TrackListFragment : Fragment() {
 
-    // TODO: Customize parameters
-    private var columnCount = 1
     private lateinit var album: Album
     private var listener: TrackListFragmentListener? = null
-    private var backListener: BackListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        arguments?.let {
-            args ->
-            columnCount = args.getInt(ARG_COLUMN_COUNT)
+        arguments?.let { args ->
             context?.let {
-                val albumId = args.getLong("albumId")
+                val albumId = args.getLong(ARG_ALBUM_ID)
                 album = Album.getAlbumByAlbumId(it ,albumId)
             }
         }
@@ -57,10 +54,7 @@ class TrackListFragment : Fragment() {
         // Set the adapter
         if (view is LinearLayout){
             with(view){
-                list.layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
+                list.layoutManager = LinearLayoutManager(context)
                 Log.d("debug","set adapter")
                 val trackList = Track.getItemsByAlbumId(context,album.albumId)
                 trackList.forEach {
@@ -82,7 +76,7 @@ class TrackListFragment : Fragment() {
             album_title_art.setImageResource(R.drawable.dummy_album_art_slim)
         }
         album_title.text = album.album
-        track_count.text = "${album.tracks} tracks"
+        track_count.text = "${album.tracks}曲"
     }
 
     override fun onAttach(context: Context) {
@@ -99,6 +93,9 @@ class TrackListFragment : Fragment() {
         listener = null
     }
 
+
+
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -111,19 +108,14 @@ class TrackListFragment : Fragment() {
      * for more information.
      */
     interface TrackListFragmentListener{
-        fun onClickListItem(track: Track)
-    }
-
-    interface BackListener{
-        fun onBack()
+        fun onClickListItem(albumId: Long, position: Int)
     }
 
     companion object {
 
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
+        const val ARG_ALBUM_ID = "albumId"
+        const val NAME = "TrackListFragment"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(albumId: Long) =
                 TrackListFragment().apply {
