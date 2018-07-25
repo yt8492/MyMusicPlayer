@@ -113,11 +113,9 @@ class TrackListFragment : Fragment() {
 
     companion object {
 
-        // TODO: Customize parameter argument names
         const val ARG_ALBUM_ID = "albumId"
         const val NAME = "TrackListFragment"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(albumId: Long) =
                 TrackListFragment().apply {
