@@ -46,7 +46,7 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     override fun onClickListItem(albumId: Long, position: Int) {
-        //vToast.makeText(this,"albumId = $albumId, position = $position",Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this,"albumId = $albumId, position = $position",Toast.LENGTH_SHORT).show()
         startService(albumId,position)
 
         playerFragment = PlayerFragment.newInstance(albumId, position)
@@ -84,7 +84,11 @@ class WakeupActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
 
+    }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("debug", "Activity onResume")
     }
 
     private fun setupFragment(){

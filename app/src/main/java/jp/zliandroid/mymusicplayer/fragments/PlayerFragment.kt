@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.os.SystemClock
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -31,29 +33,36 @@ import java.net.MalformedURLException
  * create an instance of this fragment.
  *
  */
-class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClickListener, Runnable {
 
     private var listener: PlayerFragmentListener? = null
     private lateinit var track: Track
-    private lateinit var receiver: MusicReceiver
+    lateinit var receiver: MusicReceiver
     private  lateinit var album: Album
     private var playing = false
+    private var running = false
+    private lateinit var thread: Thread
+    private lateinit var intentFilter: IntentFilter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("debug", "onCreate")
         arguments?.let { args ->
             context?.let {
                 receiver = MusicReceiver()
-                val intentFilter = IntentFilter()
+                intentFilter = IntentFilter()
                 intentFilter.addAction(MusicPlayService.ACTION_SET_PARAMS)
                 intentFilter.addAction(MusicPlayService.ACTION_SET_CURRENT_POSITION)
-                it.registerReceiver(receiver, intentFilter)
+                //it.registerReceiver(receiver, intentFilter)
 
                 val albumId = args.getLong("albumId")
                 album = Album.getAlbumByAlbumId(it, albumId)
                 val position = args.getInt("position")
                 val tracks = Track.getItemsByAlbumId(it, albumId)
                 track = tracks[position]
+                running = true
+                thread = Thread(this)
+                thread.start()
             }
         }
 
@@ -67,6 +76,7 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("debug", "onViewCreated")
         setParams()
     }
 
@@ -79,12 +89,28 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("debug", "onResume")
+        playing = true
+        running = true
+        context?.registerReceiver(receiver, intentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("debug", "onPause")
+        playing = false
+        running = false
+    }
+
     override fun onDetach() {
         super.onDetach()
-        context?.let {
-            it.unregisterReceiver(receiver)
-        }
+        Log.d("debug", "onDetach")
+        playing = false
+        running = false
         listener = null
+        context?.unregisterReceiver(receiver)
     }
 
     /**
@@ -102,7 +128,36 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         fun onButtonClick(controlType: Int)
     }
 
+    override fun run() {
+        //Log.d("debug", "running")
+        while (running){
+            try {
+                Thread.sleep(100)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            }
+            if (playing){
+                //Log.d("debug", "playing")
+                handler.sendMessage(Message.obtain(handler, 100))
+            }
+        }
+    }
+
+    private val handler = object: Handler(){
+        override fun handleMessage(msg: Message?) {
+            val msec = msg?.let { it.what } ?:0
+            incrementPosition(msec)
+        }
+    }
+
+
+    private fun incrementPosition(msec: Int){
+        seek_bar.progress += msec
+        meter_now.base = SystemClock.elapsedRealtime() - seek_bar.progress
+    }
+
     private fun setParams(){
+        playing = true
         Log.d("debug", "trackTitle = ${track.title}")
         music_title.text = track.title
         music_artist.text = track.artist
@@ -115,10 +170,10 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         seek_bar.progress = 0
         seek_bar.max = track.duration.toInt()
         seek_bar.setOnSeekBarChangeListener(this)
-        if (playing) {
-            music_play.setImageResource(R.drawable.start)
-        } else {
+        if (playing){
             music_play.setImageResource(R.drawable.stop)
+        } else {
+            music_play.setImageResource(R.drawable.start)
         }
         music_play.setOnClickListener(this)
         music_previous.setOnClickListener(this)
@@ -126,12 +181,17 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
     }
 
     private fun setCurrentPosition(currentPosition: Int){
+        if (playing) {
+            music_play.setImageResource(R.drawable.stop)
+        } else {
+            music_play.setImageResource(R.drawable.start)
+        }
         seek_bar.progress = currentPosition
         meter_now.base = SystemClock.elapsedRealtime() - currentPosition
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-
+        meter_now.base = SystemClock.elapsedRealtime() - progress
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -167,16 +227,22 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                         if (playing){
                             music_play.setImageResource(R.drawable.start)
                             clickListener.onButtonClick(MUSIC_STOP)
+                            playing = false
                         } else {
                             music_play.setImageResource(R.drawable.stop)
                             clickListener.onButtonClick(MUSIC_START)
+                            playing = true
                         }
 
-                    music_previous ->
+                    music_previous -> {
                         clickListener.onButtonClick(MUSIC_BACK)
+                        //running = false
+                    }
 
-                    music_next ->
+                    music_next -> {
                         clickListener.onButtonClick(MUSIC_NEXT)
+                        //running = false
+                    }
                 }
             }
         }
@@ -189,7 +255,9 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                 val trackId = intent.getLongExtra("trackId", -1)
                 Log.d("debug", "trackId = $trackId")
                 track = Track.getItemByTrackId(context, trackId)
+                album = Album.getAlbumByAlbumId(context, track.albumId)
                 setParams()
+                running = true
             } else if (intent.action.equals(MusicPlayService.ACTION_SET_CURRENT_POSITION)){
                 val currentPosition = intent.getIntExtra("currentPosition",-1)
                 playing = intent.getBooleanExtra("playing",false)
@@ -201,15 +269,7 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PlayerFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+
         const val NAME = "PlayerFragment"
 
         const val MUSIC_START = 1

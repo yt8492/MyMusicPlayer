@@ -13,7 +13,7 @@ import jp.zliandroid.mymusicplayer.Track
 import jp.zliandroid.mymusicplayer.activity.WakeupActivity
 import jp.zliandroid.mymusicplayer.fragments.PlayerFragment
 
-class MusicPlayService : Service(), MediaPlayer.OnCompletionListener, Runnable {
+class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
 
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var tracks: List<Track>
@@ -48,8 +48,8 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener, Runnable {
                     stopPlayer()
                 }
                 startPlayer()
-                thread = Thread(this)
-                thread.start()
+                //thread = Thread(this)
+                //thread.start()
             } else if (it.action.equals(WakeupActivity.ACTION_SEND_CONTROL)){
                 Log.d("debug", "receive control")
                 val controlType = it.getIntExtra("type", -1)
@@ -74,6 +74,7 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener, Runnable {
         mediaPlayer.setOnCompletionListener(this)
         alreadyPlayed = true
         running = true
+        sendTrack()
     }
 
     private fun stopPlayer(){
@@ -97,47 +98,50 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener, Runnable {
     }
 
     private fun playerSkip(){
-        stopPlayer()
-        nowPosition++
-        if(nowPosition < tracks.size){
-            Log.d("debug","completed")
-            val broadcastIntent = Intent()
-            startPlayer()
-            sendTrack()
-        } else {
+        if(nowPosition < tracks.size - 1){
+            nowPosition++
             stopPlayer()
+            Log.d("debug","completed")
+            startPlayer()
+        } else {
+            mediaPlayer.seekTo(mediaPlayer.duration)
+            playPause()
+            sendPosition()
         }
     }
 
     private fun playerBack(){
-        if (mediaPlayer.isPlaying) {
-            if (mediaPlayer.currentPosition < 3000) {
-                if (nowPosition > 0) {
-                    stopPlayer()
-                    nowPosition--
-                    startPlayer()
-                    sendTrack()
-                } else {
-                    mediaPlayer.seekTo(0)
-                    sendPosition()
-                }
+        if (mediaPlayer.currentPosition < 3000) {
+            if (nowPosition > 0) {
+                stopPlayer()
+                nowPosition--
+                startPlayer()
             } else {
                 mediaPlayer.seekTo(0)
                 sendPosition()
             }
+        } else {
+            mediaPlayer.seekTo(0)
+            sendPosition()
         }
+        /*if (mediaPlayer.isPlaying) {
+
+        } else {
+            mediaPlayer.seekTo(0)
+            sendPosition()
+        }*/
     }
 
-    override fun run() {
+    /*override fun run() {
         while (running){
             try {
                 Thread.sleep(100)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            sendPosition()
+            //sendPosition()
         }
-    }
+    }*/
 
     private fun sendPosition(){
         val broadcastIntent = Intent()
@@ -152,6 +156,7 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener, Runnable {
         val broadcastIntent = Intent()
         broadcastIntent.action = ACTION_SET_PARAMS
         broadcastIntent.putExtra("trackId", tracks[nowPosition].id)
+        broadcastIntent.putExtra("playing", mediaPlayer.isPlaying)
         sendBroadcast(broadcastIntent)
         Log.d("debug", "send broadcast id = ${tracks[nowPosition].id}")
         //startPlayer()
