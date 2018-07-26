@@ -42,7 +42,7 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
             if (it.action.equals(WakeupActivity.ACTION_CONNECT_SERVICE)){
                 val albumId = it.getLongExtra("albumId", -1)
                 nowPosition = it.getIntExtra("position",-1)
-                Toast.makeText(this, "albumId = $albumId, position = $nowPosition", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "albumId = $albumId, position = $nowPosition", Toast.LENGTH_SHORT).show()
                 tracks = Track.getItemsByAlbumId(this,albumId)
                 if (alreadyPlayed){
                     stopPlayer()
