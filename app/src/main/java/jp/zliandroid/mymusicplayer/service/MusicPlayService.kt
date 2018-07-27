@@ -39,25 +39,28 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
-            if (it.action.equals(WakeupActivity.ACTION_CONNECT_SERVICE)){
-                val albumId = it.getLongExtra("albumId", -1)
-                nowPosition = it.getIntExtra("position",-1)
-                //Toast.makeText(this, "albumId = $albumId, position = $nowPosition", Toast.LENGTH_SHORT).show()
-                tracks = Track.getItemsByAlbumId(this,albumId)
-                if (alreadyPlayed){
-                    stopPlayer()
+            when (it.action){
+                WakeupActivity.ACTION_CONNECT_SERVICE -> {
+                    val albumId = it.getLongExtra("albumId", -1)
+                    nowPosition = it.getIntExtra("position",-1)
+                    //Toast.makeText(this, "albumId = $albumId, position = $nowPosition", Toast.LENGTH_SHORT).show()
+                    tracks = Track.getItemsByAlbumId(this,albumId)
+                    if (alreadyPlayed){
+                        stopPlayer()
+                    }
+                    startPlayer()
+                    //thread = Thread(this)
+                    //thread.start()
                 }
-                startPlayer()
-                //thread = Thread(this)
-                //thread.start()
-            } else if (it.action.equals(WakeupActivity.ACTION_SEND_CONTROL)){
-                Log.d("debug", "receive control")
-                val controlType = it.getIntExtra("type", -1)
-                when (controlType) {
-                    PlayerFragment.MUSIC_STOP -> playPause()
-                    PlayerFragment.MUSIC_START -> playStart()
-                    PlayerFragment.MUSIC_BACK -> playerBack()
-                    PlayerFragment.MUSIC_NEXT -> playerSkip()
+                WakeupActivity.ACTION_SEND_CONTROL -> {
+                    Log.d("debug", "receive control")
+                    val controlType = it.getIntExtra("type", -1)
+                    when (controlType) {
+                        PlayerFragment.MUSIC_STOP -> playPause()
+                        PlayerFragment.MUSIC_START -> playStart()
+                        PlayerFragment.MUSIC_BACK -> playerBack()
+                        PlayerFragment.MUSIC_NEXT -> playerSkip()
+                    }
                 }
             }
         }
@@ -165,7 +168,7 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
     inner class ControlReceiver : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.let { intent ->
-                if (intent.action.equals(PlayerFragment.ACTION_CHANGE_SEEKBAR)){
+                if (intent.action == PlayerFragment.ACTION_CHANGE_SEEKBAR){
                     val currentPosition = intent.getIntExtra("currentPosition", -1)
                     mediaPlayer.seekTo(currentPosition)
                     sendPosition()

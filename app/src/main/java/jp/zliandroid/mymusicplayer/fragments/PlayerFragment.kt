@@ -251,18 +251,21 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
     inner class MusicReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             //Log.d("debug", "receive")
-            if (intent.action.equals(MusicPlayService.ACTION_SET_PARAMS)) {
-                val trackId = intent.getLongExtra("trackId", -1)
-                Log.d("debug", "trackId = $trackId")
-                track = Track.getItemByTrackId(context, trackId)
-                album = Album.getAlbumByAlbumId(context, track.albumId)
-                setParams()
-                running = true
-            } else if (intent.action.equals(MusicPlayService.ACTION_SET_CURRENT_POSITION)){
-                val currentPosition = intent.getIntExtra("currentPosition",-1)
-                playing = intent.getBooleanExtra("playing",false)
-                //Log.d("debug", "position = $currentPosition")
-                setCurrentPosition(currentPosition)
+            when (intent.action){
+                MusicPlayService.ACTION_SET_PARAMS -> {
+                    val trackId = intent.getLongExtra("trackId", -1)
+                    Log.d("debug", "trackId = $trackId")
+                    track = Track.getItemByTrackId(context, trackId)
+                    album = Album.getAlbumByAlbumId(context, track.albumId)
+                    setParams()
+                    running = true
+                }
+                MusicPlayService.ACTION_SET_CURRENT_POSITION -> {
+                    val currentPosition = intent.getIntExtra("currentPosition",-1)
+                    playing = intent.getBooleanExtra("playing",false)
+                    //Log.d("debug", "position = $currentPosition")
+                    setCurrentPosition(currentPosition)
+                }
             }
         }
 
