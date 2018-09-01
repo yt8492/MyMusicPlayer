@@ -1,34 +1,29 @@
 package jp.zliandroid.mymusicplayer.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
-import jp.zliandroid.mymusicplayer.Album
+import jp.zliandroid.mymusicplayer.data.Album
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.Track
+import jp.zliandroid.mymusicplayer.data.Track
 import jp.zliandroid.mymusicplayer.adapter.MyTrackRecyclerViewAdapter
+import jp.zliandroid.mymusicplayer.data.AlbumManager
+import jp.zliandroid.mymusicplayer.data.TrackManager
 
-import jp.zliandroid.mymusicplayer.fragments.dummy.DummyContent
 import kotlinx.android.synthetic.main.fragment_track_list.*
 import kotlinx.android.synthetic.main.fragment_track_list.view.*
-import java.text.FieldPosition
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [TrackListFragment.FragmentListener] interface.
+ * [TrackListFragment.TrackListFragmentListener] interface.
  */
 class TrackListFragment : Fragment() {
 
@@ -41,7 +36,7 @@ class TrackListFragment : Fragment() {
         arguments?.let { args ->
             context?.let {
                 val albumId = args.getLong(ARG_ALBUM_ID)
-                album = Album.getAlbumByAlbumId(it ,albumId)
+                album = AlbumManager.getAlbumByAlbumId(it ,albumId)
             }
         }
     }
@@ -56,7 +51,7 @@ class TrackListFragment : Fragment() {
             with(view){
                 list.layoutManager = LinearLayoutManager(context)
                 Log.d("debug","set adapter")
-                val trackList = Track.getItemsByAlbumId(context,album.albumId)
+                val trackList = TrackManager.getItemsByAlbumId(context,album.albumId)
                 trackList.forEach {
                     Log.d("debug",it.title)
                 }
