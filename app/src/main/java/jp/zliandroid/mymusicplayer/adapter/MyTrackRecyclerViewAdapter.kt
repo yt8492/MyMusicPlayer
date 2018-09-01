@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.Track
-import jp.zliandroid.mymusicplayer.fragments.TrackListFragment
+import jp.zliandroid.mymusicplayer.data.Track
 
 
 import jp.zliandroid.mymusicplayer.fragments.TrackListFragment.TrackListFragmentListener

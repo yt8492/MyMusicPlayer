@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -16,13 +15,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 
-import jp.zliandroid.mymusicplayer.Album
+import jp.zliandroid.mymusicplayer.data.Album
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.Track
+import jp.zliandroid.mymusicplayer.data.AlbumManager
+import jp.zliandroid.mymusicplayer.data.Track
+import jp.zliandroid.mymusicplayer.data.TrackManager
 import jp.zliandroid.mymusicplayer.service.MusicPlayService
 
 import kotlinx.android.synthetic.main.fragment_player.*
-import java.net.MalformedURLException
 
 /**
  * A simple [Fragment] subclass.
@@ -37,7 +37,7 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
 
     private var listener: PlayerFragmentListener? = null
     private lateinit var track: Track
-    lateinit var receiver: MusicReceiver
+    private lateinit var receiver: MusicReceiver
     private  lateinit var album: Album
     private var playing = false
     private var running = false
@@ -56,9 +56,9 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                 //it.registerReceiver(receiver, intentFilter)
 
                 val albumId = args.getLong("albumId")
-                album = Album.getAlbumByAlbumId(it, albumId)
+                album = AlbumManager.getAlbumByAlbumId(it, albumId)
                 val position = args.getInt("position")
-                val tracks = Track.getItemsByAlbumId(it, albumId)
+                val tracks = TrackManager.getItemsByAlbumId(it, albumId)
                 track = tracks[position]
                 running = true
                 thread = Thread(this)
@@ -113,17 +113,6 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         context?.unregisterReceiver(receiver)
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
     interface PlayerFragmentListener {
         fun onButtonClick(controlType: Int)
     }
@@ -255,8 +244,8 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                 MusicPlayService.ACTION_SET_PARAMS -> {
                     val trackId = intent.getLongExtra("trackId", -1)
                     Log.d("debug", "trackId = $trackId")
-                    track = Track.getItemByTrackId(context, trackId)
-                    album = Album.getAlbumByAlbumId(context, track.albumId)
+                    track = TrackManager.getItemByTrackId(context, trackId)
+                    album = AlbumManager.getAlbumByAlbumId(context, track.albumId)
                     setParams()
                     running = true
                 }

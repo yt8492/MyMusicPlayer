@@ -8,9 +8,9 @@ import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
-import jp.zliandroid.mymusicplayer.Track
+import jp.zliandroid.mymusicplayer.data.Track
 import jp.zliandroid.mymusicplayer.activity.WakeupActivity
+import jp.zliandroid.mymusicplayer.data.TrackManager
 import jp.zliandroid.mymusicplayer.fragments.PlayerFragment
 
 class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
@@ -44,7 +44,7 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
                     val albumId = it.getLongExtra("albumId", -1)
                     nowPosition = it.getIntExtra("position",-1)
                     //Toast.makeText(this, "albumId = $albumId, position = $nowPosition", Toast.LENGTH_SHORT).show()
-                    tracks = Track.getItemsByAlbumId(this,albumId)
+                    tracks = TrackManager.getItemsByAlbumId(this,albumId)
                     if (alreadyPlayed){
                         stopPlayer()
                     }
