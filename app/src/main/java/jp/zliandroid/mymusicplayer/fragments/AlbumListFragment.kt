@@ -3,7 +3,6 @@ package jp.zliandroid.mymusicplayer.fragments
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -12,10 +11,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import jp.zliandroid.mymusicplayer.Album
+import jp.zliandroid.mymusicplayer.data.Album
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.adapter.MyAlbumRecyclerViewAdapter
-import kotlinx.android.synthetic.main.fragment_album_list.*
+import jp.zliandroid.mymusicplayer.data.AlbumManager
 
 
 /**
@@ -50,7 +49,7 @@ class AlbumListFragment : Fragment() {
                     else -> GridLayoutManager(context, columnCount)
                 }
                 Log.d("debug","set adapter")
-                adapter = MyAlbumRecyclerViewAdapter(Album.getItems(context), listener)
+                adapter = MyAlbumRecyclerViewAdapter(AlbumManager.getItems(context), listener)
                 val dividerItemDecoration = DividerItemDecoration(context,LinearLayoutManager(activity).orientation)
                 addItemDecoration(dividerItemDecoration)
             }

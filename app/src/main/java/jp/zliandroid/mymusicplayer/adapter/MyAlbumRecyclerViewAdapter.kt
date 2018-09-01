@@ -1,13 +1,12 @@
 package jp.zliandroid.mymusicplayer.adapter
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import jp.zliandroid.mymusicplayer.Album
+import jp.zliandroid.mymusicplayer.data.Album
 import jp.zliandroid.mymusicplayer.R
 
 import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment.AlbumListFragmentListener

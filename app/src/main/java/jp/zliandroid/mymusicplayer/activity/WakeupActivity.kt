@@ -3,7 +3,6 @@ package jp.zliandroid.mymusicplayer.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
@@ -17,7 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.RuntimePermissionUtils
+import jp.zliandroid.mymusicplayer.util.RuntimePermissionUtils
 import jp.zliandroid.mymusicplayer.service.MusicPlayService
 import jp.zliandroid.mymusicplayer.fragments.AlbumListFragment
 import jp.zliandroid.mymusicplayer.fragments.PlayerFragment

@@ -1,4 +1,4 @@
-package jp.zliandroid.mymusicplayer
+package jp.zliandroid.mymusicplayer.util
 
 import android.content.Context
 import android.content.pm.PackageManager
