@@ -17,10 +17,9 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
 
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var tracks: List<Track>
-    private var nowPosition = 0
+    private var nowPosition = -1
     private var alreadyPlayed = false
     private var running = false
-    private lateinit var thread: Thread
     private lateinit var receiver: ControlReceiver
 
     override fun onBind(intent: Intent): IBinder {
@@ -45,12 +44,10 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
                     nowPosition = it.getIntExtra("position",-1)
                     //Toast.makeText(this, "albumId = $albumId, position = $nowPosition", Toast.LENGTH_SHORT).show()
                     tracks = TrackManager.getItemsByAlbumId(this,albumId)
-                    if (alreadyPlayed){
+                    if (alreadyPlayed) {
                         stopPlayer()
                     }
                     startPlayer()
-                    //thread = Thread(this)
-                    //thread.start()
                 }
                 WakeupActivity.ACTION_SEND_CONTROL -> {
                     Log.d("debug", "receive control")

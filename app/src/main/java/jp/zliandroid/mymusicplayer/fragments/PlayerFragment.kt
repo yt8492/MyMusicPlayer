@@ -1,5 +1,6 @@
 package jp.zliandroid.mymusicplayer.fragments
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -33,6 +34,7 @@ import kotlinx.android.synthetic.main.fragment_player.*
  * create an instance of this fragment.
  *
  */
+
 class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClickListener, Runnable {
 
     private var listener: PlayerFragmentListener? = null
@@ -41,7 +43,7 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
     private  lateinit var album: Album
     private var playing = false
     private var running = false
-    private lateinit var thread: Thread
+    private var thread: Thread? = null
     private lateinit var intentFilter: IntentFilter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,8 +63,6 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                 val tracks = TrackManager.getItemsByAlbumId(it, albumId)
                 track = tracks[position]
                 running = true
-                thread = Thread(this)
-                thread.start()
             }
         }
 
@@ -95,6 +95,8 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         playing = true
         running = true
         context?.registerReceiver(receiver, intentFilter)
+        thread = Thread(this)
+        thread?.start()
     }
 
     override fun onPause() {
@@ -102,6 +104,7 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         Log.d("debug", "onPause")
         playing = false
         running = false
+        thread = null
     }
 
     override fun onDetach() {
@@ -132,7 +135,8 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
         }
     }
 
-    private val handler = object: Handler(){
+    private val handler = @SuppressLint("HandlerLeak")
+    object: Handler(){
         override fun handleMessage(msg: Message?) {
             val msec = msg?.let { it.what } ?:0
             incrementPosition(msec)
@@ -263,12 +267,10 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
     companion object {
 
         const val NAME = "PlayerFragment"
-
         const val MUSIC_START = 1
         const val MUSIC_STOP = 2
         const val MUSIC_BACK = 3
         const val MUSIC_NEXT = 4
-
         const val ACTION_CHANGE_SEEKBAR = "android.intent.action.CHANGE_SEEKBAR"
 
         @JvmStatic
