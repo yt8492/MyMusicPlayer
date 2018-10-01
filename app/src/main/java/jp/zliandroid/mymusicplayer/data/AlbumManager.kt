@@ -15,12 +15,12 @@ class AlbumManager {
                 MediaStore.Audio.Albums.ARTIST,
                 MediaStore.Audio.Albums.NUMBER_OF_SONGS)
 
-        fun createAlbum(cursor: Cursor): Album {
+        private fun createAlbum(cursor: Cursor): Album {
             val id          = cursor.getLong(   cursor.getColumnIndex(MediaStore.Audio.Albums._ID))
             val album       = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM))
             val albumArt    = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))?.let {
                 Uri.parse(it)
-            } ?: null
+            }
             val albumId     = cursor.getLong(   cursor.getColumnIndex(MediaStore.Audio.Media._ID))
             val albumKey    = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_KEY))
             val artist      = cursor.getString( cursor.getColumnIndex(MediaStore.Audio.Albums.ARTIST)) ?: null

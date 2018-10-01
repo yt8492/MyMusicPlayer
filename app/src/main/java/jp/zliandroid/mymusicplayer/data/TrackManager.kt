@@ -9,7 +9,7 @@ import android.provider.MediaStore
 class TrackManager {
 
     companion object {
-        val COLUMNS: Array<String> = arrayOf(
+        private val COLUMNS: Array<String> = arrayOf(
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.TITLE,
@@ -21,7 +21,7 @@ class TrackManager {
                 MediaStore.Audio.Media.TRACK
         )
 
-        fun createTrack(cursor: Cursor): Track {
+        private fun createTrack(cursor: Cursor): Track {
             val id              = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media._ID ))
             val albumId         = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media.ALBUM_ID ))
             val artistId        = cursor.getLong( cursor.getColumnIndex( MediaStore.Audio.Media.ARTIST_ID ))
@@ -35,7 +35,7 @@ class TrackManager {
             return Track(id, albumId, artistId, path, title, album, artist, uri, duration, trackNo)
         }
 
-        fun getItems(context: Context):List<Track>{
+        fun getAllItems(context: Context):List<Track>{
             val tracks: ArrayList<Track> = arrayListOf()
             val resolver: ContentResolver = context.contentResolver
             val cursor: Cursor = resolver.query(
