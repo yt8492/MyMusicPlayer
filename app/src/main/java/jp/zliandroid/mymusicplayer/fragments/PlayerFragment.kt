@@ -22,6 +22,7 @@ import jp.zliandroid.mymusicplayer.data.AlbumManager
 import jp.zliandroid.mymusicplayer.data.Track
 import jp.zliandroid.mymusicplayer.data.TrackManager
 import jp.zliandroid.mymusicplayer.service.MusicPlayService
+import kotlinx.android.synthetic.main.fragment_album.*
 
 import kotlinx.android.synthetic.main.fragment_player.*
 
@@ -39,6 +40,8 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
 
     private var listener: PlayerFragmentListener? = null
     private lateinit var track: Track
+    private lateinit var trackIds: LongArray
+    private lateinit var tracks: ArrayList<Track>
     private lateinit var receiver: MusicReceiver
     private  lateinit var album: Album
     private var playing = false
@@ -60,9 +63,9 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                 val albumId = args.getLong("albumId")
                 album = AlbumManager.getAlbumByAlbumId(it, albumId)
                 val position = args.getInt("position")
-                val tracks = TrackManager.getItemsByAlbumId(it, albumId)
-                track = tracks[position]
-                running = true
+                trackIds = args.getLongArray("trackIds")
+                track = TrackManager.getItemByTrackId(it, trackIds[position])
+                playing = true
             }
         }
 
@@ -92,17 +95,15 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
     override fun onResume() {
         super.onResume()
         Log.d("debug", "onResume")
-        playing = true
-        running = true
         context?.registerReceiver(receiver, intentFilter)
         thread = Thread(this)
         thread?.start()
+        running = true
     }
 
     override fun onPause() {
         super.onPause()
         Log.d("debug", "onPause")
-        playing = false
         running = false
         thread = null
     }
@@ -278,6 +279,7 @@ class PlayerFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnClick
                 PlayerFragment().apply {
                     arguments = Bundle().apply {
                         putLong("albumId", albumId)
+                        putLongArray("trackIds", trackIds)
                         putInt("position", position)
                     }
         }

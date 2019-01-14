@@ -86,7 +86,7 @@ class MusicPlayService : Service(), MediaPlayer.OnCompletionListener{
 
     private fun playStart(){
         if (!mediaPlayer.isPlaying){
-            mediaPlayer.seekTo(mediaPlayer.currentPosition)
+            //mediaPlayer.seekTo(mediaPlayer.currentPosition)
             mediaPlayer.start()
         }
     }
