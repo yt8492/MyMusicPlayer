@@ -12,25 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.WakeupActivity"
+            android:name=".albumlist.AlbumListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.SET_PARAMS" />
-                <action android:name="android.intent.action.ACTION_SET_NOW_POSITION" />
-                <action android:name="android.intent.action.CHANGE_SEEKBAR" />
-                <action android:name="android.intent.action.SEND_CONTROL"/>
-                <action android:name="android.intent.action.CONNECT_SERVICE" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".service.MusicPlayService"
-            android:enabled="true"
-            android:exported="true" />
-
     </application>
 
 </manifest>
