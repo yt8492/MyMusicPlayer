@@ -5,16 +5,23 @@ import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import com.github.salomonbrys.kodein.KodeinInjector
+import com.github.salomonbrys.kodein.instance
 import jp.zliandroid.mymusicplayer.R
 
 const val PERMISSION_CODE = 100
 class AlbumListActivity : AppCompatActivity() {
+
+    private val injector = KodeinInjector()
+    private val albumListPresenter: AlbumListContract.Presenter by injector.instance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_list)
 
         setupPermission()
+
+        
 
     }
 
