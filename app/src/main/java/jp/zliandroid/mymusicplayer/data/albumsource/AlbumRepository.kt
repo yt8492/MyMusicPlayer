@@ -11,7 +11,7 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
         val albumList = arrayListOf<Album>()
         val resolver = context.contentResolver
         resolver.query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 COLUMNS,
                 null,
                 null,

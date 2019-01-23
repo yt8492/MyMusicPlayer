@@ -5,14 +5,14 @@ import jp.zliandroid.mymusicplayer.BaseView
 import jp.zliandroid.mymusicplayer.data.Album
 
 interface AlbumListContract {
-    interface View: BaseView<Presenter> {
+    interface View : BaseView<Presenter> {
         var isActive: Boolean
 
         fun showAlbums(albums: List<Album>)
         fun showTrackListUi(album: Album)
     }
 
-    interface Presenter: BasePresenter {
+    interface Presenter : BasePresenter {
         fun listAlbums()
         fun openTrackList(album: Album)
     }

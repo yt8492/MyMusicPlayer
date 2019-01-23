@@ -2,6 +2,7 @@ package jp.zliandroid.mymusicplayer
 
 import android.content.Context
 import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.instance
 
 fun applicationModule(context: Context) = Kodein.Module {

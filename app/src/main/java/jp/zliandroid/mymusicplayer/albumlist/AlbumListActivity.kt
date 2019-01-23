@@ -5,9 +5,12 @@ import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import com.github.salomonbrys.kodein.KodeinInjector
-import com.github.salomonbrys.kodein.instance
+import android.util.Log
+import com.github.salomonbrys.kodein.*
+import com.github.salomonbrys.kodein.android.appKodein
 import jp.zliandroid.mymusicplayer.R
+import jp.zliandroid.mymusicplayer.util.addFragmentToActivity
+import kotlinx.android.synthetic.main.activity_album_list.*
 
 const val PERMISSION_CODE = 100
 class AlbumListActivity : AppCompatActivity() {
@@ -18,11 +21,20 @@ class AlbumListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_list)
-
+        setSupportActionBar(toolbar)
         setupPermission()
 
-        
+        val albumListFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? AlbumListFragment
+                ?: AlbumListFragment.newInstance().apply {
+                    Log.d("debug", "apply")
+                    addFragmentToActivity(supportFragmentManager, this, R.id.fragment_container)
+                }
 
+        injector.inject(Kodein {
+            extend(appKodein())
+            import(albumListPresenterModule(albumListFragment))
+            bind<AlbumListContract.Presenter>() with provider { AlbumListPresenter(instance(), instance()) }
+        })
     }
 
     private fun setupPermission() {
