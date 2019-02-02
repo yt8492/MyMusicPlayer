@@ -7,7 +7,7 @@ import android.provider.MediaStore
 import jp.zliandroid.mymusicplayer.data.Track
 
 class TrackRepository(private val context: Context) : TrackDataSource {
-    override fun getTracks(albumId: Long, callback: TrackDataSource.LoadTracksCallback) {
+    override fun getTracks(albumId: Long): List<Track> {
         val trackList = arrayListOf<Track>()
         val resolver = context.contentResolver
         resolver.query(
@@ -20,11 +20,19 @@ class TrackRepository(private val context: Context) : TrackDataSource {
             while (cursor.moveToNext()) {
                 trackList.add(createTrack(cursor))
             }
-            callback.onTracksLoaded(trackList)
         }
+        return trackList
     }
 
-    override fun getTrack(trackId: Long, callback: TrackDataSource.GetTrackCallback) {
+    override fun getTracks(trackIds: List<Long>): List<Track> {
+        val trackList = arrayListOf<Track>()
+        trackIds.forEach {
+            trackList.add(getTrack(it))
+        }
+        return trackList
+    }
+
+    override fun getTrack(trackId: Long): Track {
         val resolver = context.contentResolver
         resolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -34,8 +42,7 @@ class TrackRepository(private val context: Context) : TrackDataSource {
                 null
         ).use { cursor ->
             cursor.moveToFirst()
-            val track = createTrack(cursor)
-            callback.onTrackLoaded(track)
+            return createTrack(cursor)
         }
     }
 

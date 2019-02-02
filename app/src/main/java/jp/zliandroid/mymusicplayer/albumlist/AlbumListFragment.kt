@@ -1,6 +1,7 @@
 package jp.zliandroid.mymusicplayer.albumlist
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -12,15 +13,17 @@ import android.widget.Toast
 
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.data.Album
+import jp.zliandroid.mymusicplayer.tracklist.TrackListActivity
 import kotlinx.android.synthetic.main.fragment_album_list.view.*
 import kotlinx.android.synthetic.main.item_album.view.*
 
 class AlbumListFragment : Fragment(), AlbumListContract.View {
     override var isActive = false
         get() = isAdded
+
     override lateinit var presenter: AlbumListContract.Presenter
 
-    internal var itemListener = object : AlbumItemListener {
+    private var itemListener = object : AlbumItemListener {
         override fun onAlbumClick(album: Album) {
             presenter.openTrackList(album)
         }
@@ -46,7 +49,9 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
     }
 
     override fun showTrackListUi(album: Album) {
-
+        val intent = Intent(context, TrackListActivity::class.java)
+        intent.putExtra("AlbumId", album.id)
+        startActivity(intent)
     }
 
     private class AlbumListAdapter(albums: List<Album>, private val itemListener: AlbumItemListener) : BaseAdapter() {

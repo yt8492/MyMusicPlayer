@@ -10,7 +10,7 @@ import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.appKodein
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.util.addFragmentToActivity
-import kotlinx.android.synthetic.main.activity_album_list.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 const val PERMISSION_CODE = 100
 class AlbumListActivity : AppCompatActivity() {
@@ -24,10 +24,10 @@ class AlbumListActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         setupPermission()
 
-        val albumListFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? AlbumListFragment
+        val albumListFragment = supportFragmentManager.findFragmentById(R.id.fragment_album_list_container) as? AlbumListFragment
                 ?: AlbumListFragment.newInstance().apply {
                     Log.d("debug", "apply")
-                    addFragmentToActivity(supportFragmentManager, this, R.id.fragment_container)
+                    addFragmentToActivity(supportFragmentManager, this, R.id.fragment_album_list_container)
                 }
 
         injector.inject(Kodein {

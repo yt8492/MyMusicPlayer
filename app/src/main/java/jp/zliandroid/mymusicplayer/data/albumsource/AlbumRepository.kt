@@ -4,10 +4,11 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import jp.zliandroid.mymusicplayer.data.Album
 
 class AlbumRepository(private val context: Context) : AlbumDataSource {
-    override fun getAlbums(callback: AlbumDataSource.LoadAlbumsCallback) {
+    override fun getAlbums(): List<Album> {
         val albumList = arrayListOf<Album>()
         val resolver = context.contentResolver
         resolver.query(
@@ -21,10 +22,11 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
                 albumList.add(createAlbum(cursor))
             }
         }
-        callback.onAlbumsLoaded(albumList)
+        return albumList
     }
 
-    override fun getAlbum(albumId: Long, callback: AlbumDataSource.GetAlbumCallback) {
+    override fun getAlbum(albumId: Long): Album {
+        Log.d("albumId", albumId.toString())
         val resolver = context.contentResolver
         resolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -33,8 +35,23 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
                 arrayOf(albumId.toString()),
                 null
         ).use { cursor ->
-            val album = createAlbum(cursor)
-            callback.onAlbumLoaded(album)
+            cursor.moveToFirst()
+            return createAlbum(cursor)
+        }
+    }
+
+    override fun getAlbumByTrackAlbumId(albumId: Long): Album {
+        Log.d("albumId", albumId.toString())
+        val resolver = context.contentResolver
+        resolver.query(
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                COLUMNS,
+                MediaStore.Audio.Albums.ALBUM_ID + "= ?",
+                arrayOf(albumId.toString()),
+                null
+        ).use { cursor ->
+            cursor.moveToFirst()
+            return createAlbum(cursor)
         }
     }
 
@@ -45,7 +62,8 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
             Uri.parse(it)
         }
         val artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))
-        return Album(id, title, albumArtUri, artistName)
+        val trackCnt = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS))
+        return Album(id, title, albumArtUri, artistName, trackCnt)
     }
 
     companion object {
@@ -53,7 +71,8 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
                 MediaStore.Audio.Albums._ID,
                 MediaStore.Audio.Albums.ALBUM,
                 MediaStore.Audio.Albums.ALBUM_ART,
-                MediaStore.Audio.Albums.ARTIST
+                MediaStore.Audio.Albums.ARTIST,
+                MediaStore.Audio.Albums.NUMBER_OF_SONGS
         )
     }
 }

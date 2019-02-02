@@ -2,4 +2,4 @@ package jp.zliandroid.mymusicplayer.data
 
 import android.net.Uri
 
-data class Album(val id: Long, val title: String, val albumArtUri: Uri?, val artistName: String?)
+data class Album(val id: Long, val title: String, val albumArtUri: Uri?, val artistName: String?, val trackCnt: Int)
