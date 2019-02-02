@@ -13,8 +13,8 @@ class TrackRepository(private val context: Context) : TrackDataSource {
         resolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 COLUMNS,
-                null,
-                null,
+                MediaStore.Audio.Media.ALBUM_ID + "= ?",
+                arrayOf(albumId.toString()),
                 null
         ).use { cursor ->
             while (cursor.moveToNext()) {

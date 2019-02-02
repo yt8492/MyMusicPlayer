@@ -16,18 +16,19 @@ class MusicPlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_music_play)
 
+        val albumId = intent.getLongExtra("AlbumId", -1)
         val trackIds = intent.getLongArrayExtra("TrackIds")
-        val trackPosition = intent.getIntExtra("TrackPosition", 0)
+        val trackPosition = intent.getIntExtra("TrackPosition", -1)
 
         val musicPlayFragment = supportFragmentManager.findFragmentById(R.id.fragment_music_play_container) as? MusicPlayFragment
-                ?: MusicPlayFragment().apply {
+                ?: MusicPlayFragment.newInstance().apply {
                     addFragmentToActivity(supportFragmentManager, this, R.id.fragment_music_play_container)
                 }
-
+//
         injector.inject(Kodein {
             extend(appKodein())
-            import(musicPlayPresenterModule(musicPlayFragment, trackIds.toList(), trackPosition))
-            bind<MusicPlayContract.Presenter>() with provider { MusicPlayPresenter(instance("TrackIds"), instance("TrackPosition"), instance(), instance(), instance()) }
+            import(musicPlayPresenterModule(musicPlayFragment))
+            bind<MusicPlayContract.Presenter>() with provider { MusicPlayPresenter(albumId, trackIds.toList(), trackPosition, instance(), instance(), instance()) }
         })
     }
 }

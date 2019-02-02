@@ -20,14 +20,14 @@ class TrackListActivity : AppCompatActivity() {
         val albumId = intent.getLongExtra("AlbumId", -1 )
 
         val trackListFragment = supportFragmentManager.findFragmentById(R.id.fragment_track_list_container) as? TrackListFragment
-            ?: TrackListFragment.newInstance().apply {
+            ?: TrackListFragment.newInstance(albumId).apply {
                 addFragmentToActivity(supportFragmentManager, this, R.id.fragment_track_list_container)
             }
 
         injector.inject(Kodein {
             extend(appKodein())
-            import(trackListPresenterModule(trackListFragment, albumId))
-            bind<TrackListContract.Presenter>() with provider { TrackListPresenter(instance("AlbumId"), instance(), instance(), instance()) }
+            import(trackListPresenterModule(trackListFragment))
+            bind<TrackListContract.Presenter>() with provider { TrackListPresenter(albumId, instance(), instance(), instance()) }
         })
     }
 }

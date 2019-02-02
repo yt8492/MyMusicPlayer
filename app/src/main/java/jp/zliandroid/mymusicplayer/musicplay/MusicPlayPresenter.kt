@@ -1,34 +1,32 @@
 package jp.zliandroid.mymusicplayer.musicplay
 
-import android.util.Log
 import jp.zliandroid.mymusicplayer.data.Track
 import jp.zliandroid.mymusicplayer.data.albumsource.AlbumRepository
 import jp.zliandroid.mymusicplayer.data.tracksource.TrackRepository
 
-class MusicPlayPresenter(trackIds: List<Long>, private var position: Int, private val albumRepository: AlbumRepository,
+class MusicPlayPresenter(albumId: Long, trackIds: List<Long>, private var position: Int, private val albumRepository: AlbumRepository,
                          trackRepository: TrackRepository, private val musicPlayView: MusicPlayContract.View)
     : MusicPlayContract.Presenter {
     init {
         musicPlayView.presenter = this
     }
 
+    private val album = albumRepository.getAlbum(albumId)
     private val tracks = trackRepository.getTracks(trackIds)
 
     override fun start() {
-//        showTrackInfo(tracks[position])
         playStart(tracks[position])
     }
 
     override fun showTrackInfo(track: Track) {
         if (musicPlayView.isActive) {
-            Log.d("showTrack", track.albumId.toString())
-            val album = albumRepository.getAlbumByTrackAlbumId(track.albumId)
             musicPlayView.setTrackInfo(track, album)
         }
     }
 
     override fun playStart(track: Track) {
         if (musicPlayView.isActive) {
+            showTrackInfo(track)
             musicPlayView.playStart(track)
         }
     }

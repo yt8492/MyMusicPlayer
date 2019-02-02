@@ -6,43 +6,43 @@
     tools:context=".tracklist.TrackListFragment"
     android:orientation="vertical">
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="#eeeeee">-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eeeeee">
 
-        <!--<ImageView-->
-            <!--android:id="@+id/album_art"-->
-            <!--android:layout_width="76dp"-->
-            <!--android:layout_height="76dp"-->
-            <!--android:layout_margin="5dp" />-->
+        <ImageView
+            android:id="@+id/album_art"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:layout_margin="5dp" />
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:orientation="vertical">-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <!--<TextView-->
-                <!--android:id="@+id/album_title"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="top"-->
-                <!--android:ellipsize="end"-->
-                <!--android:maxLines="3"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="18sp" />-->
+            <TextView
+                android:id="@+id/album_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
-            <!--<TextView-->
-                <!--android:id="@+id/track_count"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="bottom"-->
-                <!--android:layout_weight="1"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textSize="14sp" />-->
-        <!--</LinearLayout>-->
+            <TextView
+                android:id="@+id/track_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-    <!--</LinearLayout>-->
+    </LinearLayout>
 
     <ListView
         android:id="@+id/track_list"

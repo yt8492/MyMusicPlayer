@@ -29,7 +29,7 @@ class TrackListPresenter(private val albumId: Long, private val albumRepository:
         }
     }
 
-    override fun openTrack(tracks: List<Track>, position: Int) {
-        trackListView.showMusicPlayUi(tracks, position)
+    override fun openTrack(albumId: Long, tracks: List<Track>, position: Int) {
+        trackListView.showMusicPlayUi(albumId, tracks, position)
     }
 }

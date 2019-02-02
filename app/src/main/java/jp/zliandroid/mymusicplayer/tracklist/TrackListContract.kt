@@ -11,12 +11,12 @@ interface TrackListContract {
 
         fun showAlbumInfo(album: Album)
         fun showTracks(tracks: List<Track>)
-        fun showMusicPlayUi(tracks: List<Track>, position: Int)
+        fun showMusicPlayUi(albumId: Long, tracks: List<Track>, position: Int)
     }
 
     interface Presenter : BasePresenter {
         fun showAlbumInfo()
         fun listTracks()
-        fun openTrack(tracks: List<Track>, position: Int)
+        fun openTrack(albumId: Long, tracks: List<Track>, position: Int)
     }
 }

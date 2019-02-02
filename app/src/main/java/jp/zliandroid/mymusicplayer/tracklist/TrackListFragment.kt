@@ -25,7 +25,8 @@ class TrackListFragment : Fragment(), TrackListContract.View {
 
     private val itemListener = object : TrackItemListener {
         override fun onTrackClick(trackList: List<Track>, position: Int) {
-            presenter.openTrack(trackList, position)
+            val albumId = arguments?.getLong(ARGUMENT_ALBUM_ID) ?: -1
+            presenter.openTrack(albumId, trackList, position)
         }
     }
 
@@ -45,23 +46,25 @@ class TrackListFragment : Fragment(), TrackListContract.View {
     }
 
     override fun showAlbumInfo(album: Album) {
-//        if (album.albumArtUri != null) {
-//            album_art.setImageURI(album.albumArtUri)
-//        } else {
-//            album_art.setImageResource(R.drawable.dummy_album_art_slim)
-//        }
-//        album_title.text = album.title
-//        track_count.text = "${album.trackCnt}曲"
+        if (album.albumArtUri != null) {
+            album_art.setImageURI(album.albumArtUri)
+        } else {
+            album_art.setImageResource(R.drawable.dummy_album_art_slim)
+        }
+        album_title.text = album.title
+        track_count.text = "${album.trackCnt}曲"
     }
 
     override fun showTracks(tracks: List<Track>) {
         listAdapter.tracks = tracks
     }
 
-    override fun showMusicPlayUi(tracks: List<Track>, position: Int) {
-        val intent = Intent(context, MusicPlayActivity::class.java)
-        intent.putExtra("TrackIds", tracks.map { it.id }.toLongArray())
-        intent.putExtra("TrackPosition", position)
+    override fun showMusicPlayUi(albumId: Long, tracks: List<Track>, position: Int) {
+        val intent = Intent(context, MusicPlayActivity::class.java).apply {
+            putExtra("AlbumId" ,albumId)
+            putExtra("TrackIds", tracks.map { it.id }.toLongArray())
+            putExtra("TrackPosition", position)
+        }
         startActivity(intent)
     }
 
@@ -83,19 +86,11 @@ class TrackListFragment : Fragment(), TrackListContract.View {
             val rowView = convertView ?: LayoutInflater.from(parent?.context)
                     .inflate(R.layout.item_track, parent, false)
             with(rowView) {
-//                album_title.text = album.title
-//                artist.text = album.artistName
-//                album.albumArtUri?.let {
-//                    album_art.setImageURI(it)
-//                } ?: album_art.setImageResource(R.drawable.dummy_album_art_slim)
-//                setOnClickListener {
-//                    itemListener.onTrackClick(album, )
-//                }
                 track_title.text = track.title
                 track_artist.text = track.artistName
                 val dm = track.duration / 60000
                 val ds = (track.duration - dm * 60000) / 1000
-                track_duration.text = "%d:%2d".format(dm, ds)
+                track_duration.text = "%02d:%02d".format(dm, ds)
 
                 setOnClickListener {
                     itemListener.onTrackClick(tracks, position)
@@ -111,8 +106,14 @@ class TrackListFragment : Fragment(), TrackListContract.View {
     }
 
     companion object {
+        private val ARGUMENT_ALBUM_ID = "ALBUM_ID"
+
         @JvmStatic
-        fun newInstance() = TrackListFragment()
+        fun newInstance(albumId: Long) = TrackListFragment().apply {
+            arguments = Bundle().apply {
+                putLong(ARGUMENT_ALBUM_ID, albumId)
+            }
+        }
     }
 
 }
