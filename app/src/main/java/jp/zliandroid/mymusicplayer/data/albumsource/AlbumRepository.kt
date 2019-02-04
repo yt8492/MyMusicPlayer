@@ -26,7 +26,6 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
     }
 
     override fun getAlbum(albumId: Long): Album {
-        Log.d("albumId", albumId.toString())
         val resolver = context.contentResolver
         resolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -41,7 +40,6 @@ class AlbumRepository(private val context: Context) : AlbumDataSource {
     }
 
     override fun getAlbumByTrackAlbumId(albumId: Long): Album {
-        Log.d("albumId", albumId.toString())
         val resolver = context.contentResolver
         resolver.query(
                 MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
