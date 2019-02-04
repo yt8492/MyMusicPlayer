@@ -1,6 +1,5 @@
 package jp.zliandroid.mymusicplayer.tracklist
 
-import android.util.Log
 import jp.zliandroid.mymusicplayer.data.Track
 import jp.zliandroid.mymusicplayer.data.albumsource.AlbumRepository
 import jp.zliandroid.mymusicplayer.data.tracksource.TrackRepository

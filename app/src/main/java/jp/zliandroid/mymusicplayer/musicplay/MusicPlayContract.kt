@@ -15,6 +15,7 @@ interface MusicPlayContract {
         fun playPause()
         fun playResume()
         fun seekTo(milliSec: Long)
+        fun finish()
     }
 
     interface Presenter : BasePresenter {
