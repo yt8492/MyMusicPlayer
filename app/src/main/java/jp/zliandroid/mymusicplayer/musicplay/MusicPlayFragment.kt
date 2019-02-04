@@ -108,7 +108,7 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
                     e.printStackTrace()
                 }
                 if (playing) {
-                    launch(Dispatchers.Main) {
+                    withContext(Dispatchers.Main) {
                         seek_bar.progress += 100
                         meter_now.base = SystemClock.elapsedRealtime() - seek_bar.progress
                     }
