@@ -17,7 +17,6 @@ class TrackListPresenter(private val albumId: Long, private val albumRepository:
     }
 
     override fun showAlbumInfo() {
-        Log.d("debug", albumId.toString())
         val album = albumRepository.getAlbum(albumId)
         trackListView.showAlbumInfo(album)
     }

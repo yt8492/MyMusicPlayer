@@ -50,7 +50,6 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     }
 
     override fun setTrackInfo(track: Track, album: Album) {
-        Log.d("setTrack", track.title)
         music_title.text = track.title
         music_album_title.text = album.title
         music_artist.text = track.artistName
@@ -92,15 +91,12 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
         music_previous.setOnClickListener {
             presenter.playPrev()
         }
-        Log.d("setTrackCompleted", track.title)
     }
 
     override fun playStart(track: Track) {
-        Log.d("playStart", track.title)
         mediaPlayer = MediaPlayer.create(context, track.uri)
         mediaPlayer.start()
         mediaPlayer.setOnCompletionListener {
-            presenter.playStop()
             presenter.playNext()
         }
         playing = true
@@ -112,14 +108,13 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
                     e.printStackTrace()
                 }
                 if (playing) {
-                    async(Dispatchers.Main) {
+                    launch(Dispatchers.Main) {
                         seek_bar.progress += 100
                         meter_now.base = SystemClock.elapsedRealtime() - seek_bar.progress
                     }
                 }
             }
         }
-        Log.d("playStartCompleted", track.title)
     }
 
     override fun playStop() {
