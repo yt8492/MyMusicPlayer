@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.SystemClock
 
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,7 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
 
     override lateinit var presenter: MusicPlayContract.Presenter
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer? = null
 
     private var playing = false
 
@@ -50,7 +49,6 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     }
 
     override fun setTrackInfo(track: Track, album: Album) {
-        Log.d("setTrack", track.title)
         music_title.text = track.title
         music_album_title.text = album.title
         music_artist.text = track.artistName
@@ -92,16 +90,14 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
         music_previous.setOnClickListener {
             presenter.playPrev()
         }
-        Log.d("setTrackCompleted", track.title)
     }
 
     override fun playStart(track: Track) {
-        Log.d("playStart", track.title)
-        mediaPlayer = MediaPlayer.create(context, track.uri)
-        mediaPlayer.start()
-        mediaPlayer.setOnCompletionListener {
-            presenter.playStop()
-            presenter.playNext()
+        mediaPlayer = MediaPlayer.create(context, track.uri).apply {
+            start()
+            setOnCompletionListener {
+                presenter.playNext()
+            }
         }
         playing = true
         job = GlobalScope.launch {
@@ -112,42 +108,48 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
                     e.printStackTrace()
                 }
                 if (playing) {
-                    async(Dispatchers.Main) {
+                    launch(Dispatchers.Main) {
                         seek_bar.progress += 100
                         meter_now.base = SystemClock.elapsedRealtime() - seek_bar.progress
                     }
                 }
             }
         }
-        Log.d("playStartCompleted", track.title)
     }
 
     override fun playStop() {
         job?.cancel()
         job = null
         playing = false
-        mediaPlayer.reset()
-        mediaPlayer.release()
+        mediaPlayer?.apply {
+            reset()
+            release()
+        }
+        mediaPlayer = null
     }
 
     override fun playPause() {
         playing = false
         music_play.setImageResource(R.drawable.start)
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.pause()
         }
     }
 
     override fun playResume() {
         playing = true
         music_play.setImageResource(R.drawable.stop)
-        if (!mediaPlayer.isPlaying) {
-            mediaPlayer.start()
+        if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
         }
     }
 
     override fun seekTo(milliSec: Long) {
-        mediaPlayer.seekTo(milliSec.toInt())
+        mediaPlayer?.seekTo(milliSec.toInt())
+    }
+
+    override fun finish() {
+        activity?.finish()
     }
 
     companion object {

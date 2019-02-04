@@ -24,7 +24,7 @@ class MusicPlayActivity : AppCompatActivity() {
                 ?: MusicPlayFragment.newInstance().apply {
                     addFragmentToActivity(supportFragmentManager, this, R.id.fragment_music_play_container)
                 }
-//
+
         injector.inject(Kodein {
             extend(appKodein())
             import(musicPlayPresenterModule(musicPlayFragment))

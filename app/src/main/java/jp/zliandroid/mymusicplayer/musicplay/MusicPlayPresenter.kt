@@ -57,13 +57,20 @@ class MusicPlayPresenter(albumId: Long, trackIds: List<Long>, private var positi
 
     override fun playNext() {
         if (position + 1 < tracks.size) {
+            playStop()
             playStart(tracks[++position])
+        } else {
+            playStop()
+            musicPlayView.finish()
         }
     }
 
     override fun playPrev() {
         if (position - 1 >= 0) {
+            playStop()
             playStart(tracks[--position])
+        } else {
+            musicPlayView.seekTo(0)
         }
     }
 }
