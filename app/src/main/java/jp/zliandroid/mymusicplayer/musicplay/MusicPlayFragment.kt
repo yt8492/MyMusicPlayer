@@ -102,11 +102,7 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
         playing = true
         job = GlobalScope.launch {
             while (true) {
-                try {
-                    Thread.sleep(100)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
+                delay(100)
                 if (playing) {
                     withContext(Dispatchers.Main) {
                         seek_bar.progress += 100
