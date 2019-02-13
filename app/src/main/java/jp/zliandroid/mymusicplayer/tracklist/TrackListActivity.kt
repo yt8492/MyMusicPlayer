@@ -5,8 +5,7 @@ import android.os.Bundle
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.appKodein
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.util.addFragmentToActivity
-import kotlinx.android.synthetic.main.toolbar.*
+import jp.zliandroid.mymusicplayer.util.ActivityUtils
 
 class TrackListActivity : AppCompatActivity() {
 
@@ -21,7 +20,7 @@ class TrackListActivity : AppCompatActivity() {
 
         val trackListFragment = supportFragmentManager.findFragmentById(R.id.fragment_track_list_container) as? TrackListFragment
             ?: TrackListFragment.newInstance(albumId).apply {
-                addFragmentToActivity(supportFragmentManager, this, R.id.fragment_track_list_container)
+                ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.fragment_track_list_container)
             }
 
         injector.inject(Kodein {
