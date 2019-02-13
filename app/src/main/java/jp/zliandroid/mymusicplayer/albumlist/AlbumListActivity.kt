@@ -9,7 +9,7 @@ import android.util.Log
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.appKodein
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.util.addFragmentToActivity
+import jp.zliandroid.mymusicplayer.util.ActivityUtils
 import kotlinx.android.synthetic.main.toolbar.*
 
 const val PERMISSION_CODE = 100
@@ -27,7 +27,7 @@ class AlbumListActivity : AppCompatActivity() {
         val albumListFragment = supportFragmentManager.findFragmentById(R.id.fragment_album_list_container) as? AlbumListFragment
                 ?: AlbumListFragment.newInstance().apply {
                     Log.d("debug", "apply")
-                    addFragmentToActivity(supportFragmentManager, this, R.id.fragment_album_list_container)
+                    ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.fragment_album_list_container)
                 }
 
         injector.inject(Kodein {

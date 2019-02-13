@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.appKodein
 import jp.zliandroid.mymusicplayer.R
-import jp.zliandroid.mymusicplayer.util.addFragmentToActivity
+import jp.zliandroid.mymusicplayer.util.ActivityUtils
 
 class MusicPlayActivity : AppCompatActivity() {
 
@@ -22,7 +22,7 @@ class MusicPlayActivity : AppCompatActivity() {
 
         val musicPlayFragment = supportFragmentManager.findFragmentById(R.id.fragment_music_play_container) as? MusicPlayFragment
                 ?: MusicPlayFragment.newInstance().apply {
-                    addFragmentToActivity(supportFragmentManager, this, R.id.fragment_music_play_container)
+                    ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.fragment_music_play_container)
                 }
 
         injector.inject(Kodein {
