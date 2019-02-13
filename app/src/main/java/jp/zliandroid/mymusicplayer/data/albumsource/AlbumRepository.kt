@@ -4,7 +4,6 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import jp.zliandroid.mymusicplayer.data.Album
 
 class AlbumRepository(private val context: Context) : AlbumDataSource {

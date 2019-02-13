@@ -4,12 +4,10 @@ package jp.zliandroid.mymusicplayer.albumlist
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.Toast
 
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.data.Album
@@ -50,7 +48,6 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
 
     override fun showTrackListUi(album: Album) {
         val intent = Intent(context, TrackListActivity::class.java)
-        intent.putExtra("AlbumId", album.id)
         startActivity(intent)
     }
 

@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
-import android.util.Log
 import com.github.salomonbrys.kodein.*
 import com.github.salomonbrys.kodein.android.appKodein
 import jp.zliandroid.mymusicplayer.R
@@ -26,7 +25,6 @@ class AlbumListActivity : AppCompatActivity() {
 
         val albumListFragment = supportFragmentManager.findFragmentById(R.id.fragment_album_list_container) as? AlbumListFragment
                 ?: AlbumListFragment.newInstance().apply {
-                    Log.d("debug", "apply")
                     ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.fragment_album_list_container)
                 }
 
