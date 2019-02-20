@@ -5,8 +5,11 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import jp.zliandroid.mymusicplayer.data.Album
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AlbumRepository(private val context: Context) : AlbumDataSource {
+@Singleton
+class AlbumRepository @Inject constructor(private val context: Context) : AlbumDataSource {
     override fun getAlbums(): List<Album> {
         val albumList = arrayListOf<Album>()
         val resolver = context.contentResolver
