@@ -48,6 +48,7 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
 
     override fun showTrackListUi(album: Album) {
         val intent = Intent(context, TrackListActivity::class.java)
+        intent.putExtra("AlbumId", album.id)
         startActivity(intent)
     }
 
