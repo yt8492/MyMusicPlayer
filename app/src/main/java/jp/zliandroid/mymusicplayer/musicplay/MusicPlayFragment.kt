@@ -4,7 +4,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.SystemClock
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
  * A simple [Fragment] subclass.
  *
  */
-class MusicPlayFragment : Fragment(), MusicPlayContract.View {
+class MusicPlayFragment : androidx.fragment.app.Fragment(), MusicPlayContract.View {
     override val isActive: Boolean
         get() = isAdded
 
