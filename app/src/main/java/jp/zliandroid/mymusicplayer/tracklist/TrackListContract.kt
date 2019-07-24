@@ -14,7 +14,7 @@ interface TrackListContract {
         fun showMusicPlayUi(albumId: Long, tracks: List<Track>, position: Int)
     }
 
-    interface Presenter : BasePresenter {
+    interface Presenter : BasePresenter<View> {
         fun showAlbumInfo()
         fun listTracks()
         fun openTrack(albumId: Long, tracks: List<Track>, position: Int)

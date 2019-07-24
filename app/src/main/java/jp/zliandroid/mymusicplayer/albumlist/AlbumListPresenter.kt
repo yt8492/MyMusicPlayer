@@ -2,11 +2,18 @@ package jp.zliandroid.mymusicplayer.albumlist
 
 import jp.zliandroid.mymusicplayer.data.Album
 import jp.zliandroid.mymusicplayer.data.albumsource.AlbumRepository
+import javax.inject.Inject
 
-class AlbumListPresenter(private val albumRepository: AlbumRepository, private val albumListView: AlbumListContract.View)
-    : AlbumListContract.Presenter {
-    init {
-        albumListView.presenter = this
+class AlbumListPresenter @Inject constructor(
+        private val albumRepository: AlbumRepository
+) : AlbumListContract.Presenter {
+
+    private lateinit var albumListView: AlbumListContract.View
+
+    override fun takeView(view: AlbumListContract.View) {
+        albumListView = view.apply {
+            presenter = this@AlbumListPresenter
+        }
     }
 
     override fun start() {

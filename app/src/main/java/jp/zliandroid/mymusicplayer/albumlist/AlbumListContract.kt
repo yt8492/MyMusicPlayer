@@ -12,7 +12,7 @@ interface AlbumListContract {
         fun showTrackListUi(album: Album)
     }
 
-    interface Presenter : BasePresenter {
+    interface Presenter : BasePresenter<View> {
         fun listAlbums()
         fun openTrackList(album: Album)
     }
