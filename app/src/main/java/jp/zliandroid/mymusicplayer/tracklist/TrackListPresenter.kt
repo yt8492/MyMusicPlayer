@@ -3,11 +3,20 @@ package jp.zliandroid.mymusicplayer.tracklist
 import jp.zliandroid.mymusicplayer.data.Track
 import jp.zliandroid.mymusicplayer.data.albumsource.AlbumRepository
 import jp.zliandroid.mymusicplayer.data.tracksource.TrackRepository
+import javax.inject.Inject
 
-class TrackListPresenter(private val albumId: Long, private val albumRepository: AlbumRepository, private val trackRepository: TrackRepository, private val trackListView: TrackListContract.View)
-    : TrackListContract.Presenter {
-    init {
-        trackListView.presenter = this
+class TrackListPresenter @Inject constructor(
+        private val albumId: Long,
+        private val albumRepository: AlbumRepository,
+        private val trackRepository: TrackRepository
+) : TrackListContract.Presenter {
+
+    private lateinit var trackListView: TrackListContract.View
+
+    override fun takeView(view: TrackListContract.View) {
+        trackListView = view.apply {
+            presenter = this@TrackListPresenter
+        }
     }
 
     override fun start() {

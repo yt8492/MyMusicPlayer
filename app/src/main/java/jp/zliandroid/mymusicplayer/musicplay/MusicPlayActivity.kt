@@ -1,34 +1,49 @@
 package jp.zliandroid.mymusicplayer.musicplay
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.github.salomonbrys.kodein.*
-import com.github.salomonbrys.kodein.android.appKodein
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.util.ActivityUtils
+import javax.inject.Inject
 
-class MusicPlayActivity : AppCompatActivity() {
+class MusicPlayActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
-    private val injector = KodeinInjector()
-    private val musicPlayPresenter: MusicPlayContract.Presenter by injector.instance()
+    @Inject
+    internal lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
+
+    @Inject
+    internal lateinit var musicPlayPresenter: MusicPlayContract.Presenter
+
+    val albumId by lazy {
+        intent.getLongExtra("AlbumId", -1)
+    }
+
+    val trackIds by lazy {
+        intent.getLongArrayExtra("TrackIds")
+                .toList()
+    }
+
+    val trackPosition by lazy {
+        intent.getIntExtra("TrackPosition", -1)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_music_play)
+        AndroidInjection.inject(this)
 
-        val albumId = intent.getLongExtra("AlbumId", -1)
-        val trackIds = intent.getLongArrayExtra("TrackIds")
-        val trackPosition = intent.getIntExtra("TrackPosition", -1)
-
-        val musicPlayFragment = supportFragmentManager.findFragmentById(R.id.fragment_music_play_container) as? MusicPlayFragment
+        supportFragmentManager.findFragmentById(R.id.fragment_music_play_container) as? MusicPlayFragment
                 ?: MusicPlayFragment.newInstance().apply {
                     ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.fragment_music_play_container)
                 }
+    }
 
-        injector.inject(Kodein {
-            extend(appKodein())
-            import(musicPlayPresenterModule(musicPlayFragment))
-            bind<MusicPlayContract.Presenter>() with provider { MusicPlayPresenter(albumId, trackIds.toList(), trackPosition, instance(), instance(), instance()) }
-        })
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+        return fragmentInjector
     }
 }

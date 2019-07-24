@@ -18,7 +18,7 @@ interface MusicPlayContract {
         fun finish()
     }
 
-    interface Presenter : BasePresenter {
+    interface Presenter : BasePresenter<View> {
         fun showTrackInfo(track: Track)
         fun playStart(track: Track)
         fun playStop()

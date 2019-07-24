@@ -1,20 +1,23 @@
 package jp.zliandroid.mymusicplayer.musicplay
 
+import android.content.Context
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.SystemClock
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import dagger.android.support.AndroidSupportInjection
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.data.Album
 
 import jp.zliandroid.mymusicplayer.data.Track
 import kotlinx.android.synthetic.main.fragment_music_play.*
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -24,6 +27,7 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     override val isActive: Boolean
         get() = isAdded
 
+    @Inject
     override lateinit var presenter: MusicPlayContract.Presenter
 
     private var mediaPlayer: MediaPlayer? = null
@@ -38,8 +42,14 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
         return inflater.inflate(R.layout.fragment_music_play, container, false)
     }
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
+
     override fun onResume() {
         super.onResume()
+        presenter.takeView(this)
         presenter.start()
     }
 

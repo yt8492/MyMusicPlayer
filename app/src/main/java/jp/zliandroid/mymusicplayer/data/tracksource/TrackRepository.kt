@@ -5,8 +5,11 @@ import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
 import jp.zliandroid.mymusicplayer.data.Track
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class TrackRepository(private val context: Context) : TrackDataSource {
+@Singleton
+class TrackRepository @Inject constructor(private val context: Context) : TrackDataSource {
     override fun getTracks(albumId: Long): List<Track> {
         val trackList = arrayListOf<Track>()
         val resolver = context.contentResolver

@@ -1,13 +1,15 @@
 package jp.zliandroid.mymusicplayer.tracklist
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.fragment.app.Fragment
+import dagger.android.support.AndroidSupportInjection
 
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.data.Album
@@ -16,11 +18,13 @@ import jp.zliandroid.mymusicplayer.musicplay.MusicPlayActivity
 import kotlinx.android.synthetic.main.fragment_track_list.*
 import kotlinx.android.synthetic.main.fragment_track_list.view.*
 import kotlinx.android.synthetic.main.item_track.view.*
+import javax.inject.Inject
 
 class TrackListFragment : Fragment(), TrackListContract.View {
     override var isActive = false
         get() = isAdded
 
+    @Inject
     override lateinit var presenter: TrackListContract.Presenter
 
     private val itemListener = object : TrackItemListener {
@@ -40,8 +44,14 @@ class TrackListFragment : Fragment(), TrackListContract.View {
         }
     }
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
+
     override fun onResume() {
         super.onResume()
+        presenter.takeView(this)
         presenter.start()
     }
 
@@ -106,7 +116,7 @@ class TrackListFragment : Fragment(), TrackListContract.View {
     }
 
     companion object {
-        private val ARGUMENT_ALBUM_ID = "ALBUM_ID"
+        private const val ARGUMENT_ALBUM_ID = "ALBUM_ID"
 
         @JvmStatic
         fun newInstance(albumId: Long) = TrackListFragment().apply {

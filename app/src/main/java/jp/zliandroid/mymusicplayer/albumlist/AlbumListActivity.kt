@@ -2,37 +2,38 @@ package jp.zliandroid.mymusicplayer.albumlist
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import com.github.salomonbrys.kodein.*
-import com.github.salomonbrys.kodein.android.appKodein
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.util.ActivityUtils
 import kotlinx.android.synthetic.main.toolbar.*
+import javax.inject.Inject
 
-const val PERMISSION_CODE = 100
-class AlbumListActivity : AppCompatActivity() {
+class AlbumListActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
-    private val injector = KodeinInjector()
-    private val albumListPresenter: AlbumListContract.Presenter by injector.instance()
+    @Inject
+    internal lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>
+
+    @Inject
+    internal lateinit var albumListPresenter: AlbumListContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_album_list)
+        AndroidInjection.inject(this)
         setSupportActionBar(toolbar)
         setupPermission()
 
-        val albumListFragment = supportFragmentManager.findFragmentById(R.id.fragment_album_list_container) as? AlbumListFragment
+        supportFragmentManager.findFragmentById(R.id.fragment_album_list_container) as? AlbumListFragment
                 ?: AlbumListFragment.newInstance().apply {
                     ActivityUtils.addFragmentToActivity(supportFragmentManager, this, R.id.fragment_album_list_container)
                 }
-
-        injector.inject(Kodein {
-            extend(appKodein())
-            import(albumListPresenterModule(albumListFragment))
-            bind<AlbumListContract.Presenter>() with provider { AlbumListPresenter(instance(), instance()) }
-        })
     }
 
     private fun setupPermission() {
@@ -44,5 +45,13 @@ class AlbumListActivity : AppCompatActivity() {
         if (permissionList.isNotEmpty()) {
             ActivityCompat.requestPermissions(this, permissionList.toTypedArray(), PERMISSION_CODE)
         }
+    }
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+        return fragmentInjector
+    }
+
+    companion object {
+        private const val PERMISSION_CODE = 100
     }
 }

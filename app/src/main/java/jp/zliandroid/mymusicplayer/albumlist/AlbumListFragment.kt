@@ -1,24 +1,28 @@
 package jp.zliandroid.mymusicplayer.albumlist
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.fragment.app.Fragment
+import dagger.android.support.AndroidSupportInjection
 
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.data.Album
 import jp.zliandroid.mymusicplayer.tracklist.TrackListActivity
 import kotlinx.android.synthetic.main.fragment_album_list.view.*
 import kotlinx.android.synthetic.main.item_album.view.*
+import javax.inject.Inject
 
 class AlbumListFragment : Fragment(), AlbumListContract.View {
     override var isActive = false
         get() = isAdded
 
+    @Inject
     override lateinit var presenter: AlbumListContract.Presenter
 
     private var itemListener = object : AlbumItemListener {
@@ -37,8 +41,14 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
         }
     }
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        AndroidSupportInjection.inject(this)
+    }
+
     override fun onResume() {
         super.onResume()
+        presenter.takeView(this)
         presenter.start()
     }
 
@@ -47,8 +57,9 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
     }
 
     override fun showTrackListUi(album: Album) {
-        val intent = Intent(context, TrackListActivity::class.java)
-        intent.putExtra("AlbumId", album.id)
+        val intent = Intent(context, TrackListActivity::class.java).apply {
+            putExtra("AlbumId", album.id)
+        }
         startActivity(intent)
     }
 
