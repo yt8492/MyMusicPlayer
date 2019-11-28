@@ -25,6 +25,10 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 }
 
 dependencies {
@@ -35,6 +39,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
@@ -44,6 +49,9 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:2.25.2"
     annotationProcessor "com.google.dagger:dagger-compiler:2.25.2"
     kapt "com.google.dagger:dagger-android-processor:2.23.2"
+
+    implementation project(':exoplayer-library-core')
+    implementation project(':exoplayer-extension-flac')
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
