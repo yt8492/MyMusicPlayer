@@ -1,7 +1,6 @@
 package jp.zliandroid.mymusicplayer.musicplay
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.SystemClock
 
@@ -10,6 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.lifecycle.lifecycleScope
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util
 import dagger.android.support.AndroidSupportInjection
 import jp.zliandroid.mymusicplayer.R
 import jp.zliandroid.mymusicplayer.data.Album
@@ -30,7 +35,28 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     @Inject
     override lateinit var presenter: MusicPlayContract.Presenter
 
-    private var mediaPlayer: MediaPlayer? = null
+    private val exoPlayer by lazy {
+        ExoPlayerFactory.newSimpleInstance(requireContext()).apply {
+            addListener(object : Player.EventListener {
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        presenter.playNext()
+                    }
+                }
+            })
+        }
+    }
+
+    private val dataSourceFactory by lazy {
+        DefaultDataSourceFactory(
+                requireContext(),
+                Util.getUserAgent(requireContext(), "MyMusicPlayer")
+        )
+    }
+
+    private val mediaSourceFactory by lazy {
+        ProgressiveMediaSource.Factory(dataSourceFactory)
+    }
 
     private var playing = false
 
@@ -42,7 +68,7 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
         return inflater.inflate(R.layout.fragment_music_play, container, false)
     }
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         AndroidSupportInjection.inject(this)
     }
@@ -103,19 +129,21 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     }
 
     override fun playStart(track: Track) {
-        mediaPlayer = MediaPlayer.create(context, track.uri).apply {
-            start()
-            setOnCompletionListener {
-                presenter.playNext()
-            }
+        exoPlayer.apply {
+            val mediaSource = mediaSourceFactory.createMediaSource(track.uri)
+            prepare(mediaSource)
+            playWhenReady = true
         }
+
         playing = true
-        job = GlobalScope.launch {
+        job = lifecycleScope.launch {
             while (true) {
-                delay(100)
+                withContext(Dispatchers.Default) {
+                    delay(100)
+                }
                 if (playing) {
-                    withContext(Dispatchers.Main) {
-                        seek_bar.progress += 100
+                    withContext(Dispatchers.Main.immediate) {
+                        seek_bar.progress = exoPlayer.currentPosition.toInt()
                         meter_now.base = SystemClock.elapsedRealtime() - seek_bar.progress
                     }
                 }
@@ -124,37 +152,29 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     }
 
     override fun playStop() {
-        job?.cancel()
-        job = null
+        exoPlayer.playWhenReady = false
         playing = false
-        mediaPlayer?.apply {
-            reset()
-            release()
-        }
-        mediaPlayer = null
+        job = null
     }
 
     override fun playPause() {
+        exoPlayer.playWhenReady = false
         playing = false
         music_play.setImageResource(R.drawable.start)
-        if (mediaPlayer?.isPlaying == true) {
-            mediaPlayer?.pause()
-        }
     }
 
     override fun playResume() {
         playing = true
         music_play.setImageResource(R.drawable.stop)
-        if (mediaPlayer?.isPlaying == false) {
-            mediaPlayer?.start()
-        }
+        exoPlayer.playWhenReady = true
     }
 
     override fun seekTo(milliSec: Long) {
-        mediaPlayer?.seekTo(milliSec.toInt())
+        exoPlayer.seekTo(milliSec)
     }
 
     override fun finish() {
+        exoPlayer.release()
         activity?.finish()
     }
 

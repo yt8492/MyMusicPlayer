@@ -7,11 +7,34 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/cast" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/cronet" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/ffmpeg" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/flac" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/gvr" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/ima" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/jobdispatcher" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/leanback" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/mediasession" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/okhttp" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/opus" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/rtmp" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/vp9" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/extensions/workmanager" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/library/all" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/library/core" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/library/dash" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/library/hls" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/library/smoothstreaming" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/library/ui" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/testutils" />
+            <option value="$USER_HOME$/AndroidLibrary/ExoPlayer/testutils_robolectric" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>
