@@ -1,4 +1,1 @@
-include ':app'
-gradle.ext.exoplayerRoot = '/Users/yt8492/AndroidLibrary/ExoPlayer'
-gradle.ext.exoplayerModulePrefix = 'exoplayer-'
-apply from: new File(gradle.ext.exoplayerRoot, 'core_settings.gradle')
+include ':app', ':extension-flac-debug'
