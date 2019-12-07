@@ -39,7 +39,7 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
         ExoPlayerFactory.newSimpleInstance(requireContext()).apply {
             addListener(object : Player.EventListener {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    if (playbackState == Player.STATE_ENDED) {
+                    if (playbackState == Player.STATE_ENDED && playWhenReady) {
                         presenter.playNext()
                     }
                 }
