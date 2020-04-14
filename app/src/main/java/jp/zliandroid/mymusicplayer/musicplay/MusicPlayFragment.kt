@@ -160,12 +160,12 @@ class MusicPlayFragment : Fragment(), MusicPlayContract.View {
     override fun playPause() {
         exoPlayer.playWhenReady = false
         playing = false
-        music_play.setImageResource(R.drawable.start)
+        music_play.setImageResource(R.drawable.ic_audio_play)
     }
 
     override fun playResume() {
         playing = true
-        music_play.setImageResource(R.drawable.stop)
+        music_play.setImageResource(R.drawable.ic_audio_pause)
         exoPlayer.playWhenReady = true
     }
 
